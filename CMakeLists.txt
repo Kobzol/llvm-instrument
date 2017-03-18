@@ -18,6 +18,9 @@ link_directories(${Z3_DIR}/lib)
 
 include_directories(${PROJECT_SOURCE_DIR}/instrumentation)
 
+add_custom_target(build)
+add_dependencies(build instrumentation llvmSE llvmSEDyn rewinder input)
+
 set(Z3_LIB z3)
 set(CLANG_LIB
     clangCodeGen
@@ -101,7 +104,7 @@ add_library(llvmSEDyn SHARED
         dynlib/memory/StaticAllocator.h
         dynlib/instrument/RuntimeContext.cpp
         dynlib/memory/MmapAllocator.cpp
-        dynlib/util/Logger.cpp dynlib/instrument/InstrumentBlock.cpp dynlib/instrument/InstrumentBlock.h)
+        dynlib/util/Logger.cpp dynlib/instrument/InstrumentBlock.cpp dynlib/instrument/InstrumentBlock.h dynlib/memory/HeapManager.cpp dynlib/memory/HeapManager.h)
 target_link_libraries(llvmSEDyn dl)
 #target_link_libraries(llvmSEDyn ${Z3_LIB})
 

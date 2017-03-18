@@ -20,7 +20,7 @@ void RuntimeContext::stopInstrumentation()
 
 void RuntimeContext::init()
 {
-    this->p = new int;
+    this->heapManager = new HeapManager();
 }
 
 void RuntimeContext::connect(const char* host, unsigned short port)
@@ -32,4 +32,9 @@ void RuntimeContext::connect(const char* host, unsigned short port)
 void RuntimeContext::setMmapArea(void* address, size_t size)
 {
     this->client.writeline("set-mmap-area " + std::to_string((size_t) address) + " " + std::to_string(size));
+}
+
+HeapManager* RuntimeContext::getHeapManager() const
+{
+    return heapManager;
 }

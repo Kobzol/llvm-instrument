@@ -60,6 +60,10 @@ extern "C"
         }
 
         void* addr = linkerManager.malloc_orig(size);
+        {
+            IBlock block(runtimeContext);
+            runtimeContext->getHeapManager()->handle_malloc(addr, size);
+        }
         return addr;
     }
     void* calloc(size_t count, size_t size)
@@ -80,6 +84,10 @@ extern "C"
         }
 
         void* addr = linkerManager.calloc_orig(count, size);
+        {
+            IBlock block(runtimeContext);
+            runtimeContext->getHeapManager()->handle_malloc(addr, count * size);
+        }
         return addr;
     }
     void* realloc(void* addr, size_t size)
@@ -101,6 +109,10 @@ extern "C"
         }
 
         void* newAddr = linkerManager.realloc_orig(addr, size);
+        {
+            IBlock block(runtimeContext);
+            runtimeContext->getHeapManager()->handle_realloc(addr, newAddr, size);
+        }
         return newAddr;
     }
     void free(void* addr)
@@ -121,17 +133,21 @@ extern "C"
 
         if (runtimeContext->isInstrumenting())
         {
-
+            return;
         }
 
         linkerManager.free_orig(addr);
+        {
+            IBlock block(runtimeContext);
+            runtimeContext->getHeapManager()->handle_free(addr);
+        }
     }
 
     void __se_init()
     {
-        Logger::log("SE init\n");
-
         init();
+
+        IBlock block(runtimeContext);
 
         const char* portEnv = getenv("SE_PORT");
         if (portEnv != nullptr)
