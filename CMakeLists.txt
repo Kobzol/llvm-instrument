@@ -8,7 +8,7 @@ set(CLANG_DIR "/home/kobzol/libraries/llvm3.9-binaries")
 set(Z3_DIR "/home/kobzol/libraries/z3/build/build")
 
 set(CMAKE_CXX_COMPILER "${CLANG_DIR}/bin/clang++")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -fPIC -fno-omit-frame-pointer -fno-limit-debug-info -std=c++14 -fno-rtti -Wsign-compare -Wall -pedantic -D__STDC_CONSTANT_MACROS -D__STDC_LIMIT_MACROS")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -fno-omit-frame-pointer -fno-limit-debug-info -std=c++14 -fno-rtti -Wsign-compare -Wall -pedantic -D__STDC_CONSTANT_MACROS -D__STDC_LIMIT_MACROS")
 
 include_directories(${CLANG_DIR}/include)
 link_directories(${CLANG_DIR}/lib)
@@ -17,9 +17,6 @@ include_directories(${Z3_DIR}/include)
 link_directories(${Z3_DIR}/lib)
 
 include_directories(${PROJECT_SOURCE_DIR}/instrumentation)
-
-add_custom_target(build)
-add_dependencies(build instrumentation llvmSE llvmSEDyn rewinder input)
 
 set(Z3_LIB z3)
 set(CLANG_LIB
@@ -104,7 +101,7 @@ add_library(llvmSEDyn SHARED
         dynlib/memory/StaticAllocator.h
         dynlib/instrument/RuntimeContext.cpp
         dynlib/memory/MmapAllocator.cpp
-        dynlib/util/Logger.cpp dynlib/instrument/InstrumentBlock.cpp dynlib/instrument/InstrumentBlock.h dynlib/memory/HeapManager.cpp dynlib/memory/HeapManager.h)
+        dynlib/util/Logger.cpp dynlib/instrument/InstrumentBlock.cpp dynlib/instrument/InstrumentBlock.h dynlib/memory/HeapManager.cpp dynlib/memory/HeapManager.h dynlib/memory/Allocator.h)
 target_link_libraries(llvmSEDyn dl)
 #target_link_libraries(llvmSEDyn ${Z3_LIB})
 

@@ -30,8 +30,6 @@ static void init()
     if (initialized) return;
     initialized = true;
 
-    Logger::log("init inside\n");
-
     mmapAllocator.init(DYNAMIC_ALLOC_SIZE);
     runtimeContext = new (mmapAllocator.alloc(sizeof(RuntimeContext))) RuntimeContext();
     {
@@ -86,7 +84,7 @@ extern "C"
         void* addr = linkerManager.calloc_orig(count, size);
         {
             IBlock block(runtimeContext);
-            runtimeContext->getHeapManager()->handle_malloc(addr, count * size);
+            //runtimeContext->getHeapManager()->handle_malloc(addr, count * size);
         }
         return addr;
     }
@@ -111,7 +109,7 @@ extern "C"
         void* newAddr = linkerManager.realloc_orig(addr, size);
         {
             IBlock block(runtimeContext);
-            runtimeContext->getHeapManager()->handle_realloc(addr, newAddr, size);
+            //runtimeContext->getHeapManager()->handle_realloc(addr, newAddr, size);
         }
         return newAddr;
     }
@@ -139,21 +137,24 @@ extern "C"
         linkerManager.free_orig(addr);
         {
             IBlock block(runtimeContext);
-            runtimeContext->getHeapManager()->handle_free(addr);
+            //runtimeContext->getHeapManager()->handle_free(addr);
         }
     }
 
     void __se_init()
     {
+        Logger::log("SE init\n");
+
         init();
 
         IBlock block(runtimeContext);
 
+        const char* hostEnv = "127.0.0.1";
         const char* portEnv = getenv("SE_PORT");
-        if (portEnv != nullptr)
+        if (hostEnv != nullptr && portEnv != nullptr)
         {
-            Logger::log("Connecting to %s\n", portEnv);
-            runtimeContext->connect("127.0.0.1", (unsigned short) std::stoi(portEnv, nullptr, 10));
+            Logger::log("Connecting to %s:%s\n", hostEnv, portEnv);
+            runtimeContext->connect(hostEnv, (unsigned short) std::stoi(portEnv, nullptr, 10));
             runtimeContext->setMmapArea(mmapAllocator.getAddress(), DYNAMIC_ALLOC_SIZE);
         }
     }

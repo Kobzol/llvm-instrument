@@ -2,7 +2,9 @@
 
 #include <cstdlib>
 
-class MmapAllocator
+#include "Allocator.h"
+
+class MmapAllocator : public Allocator
 {
 public:
     void init(size_t size);

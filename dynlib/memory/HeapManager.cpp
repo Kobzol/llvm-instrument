@@ -1,6 +1,5 @@
 #include "HeapManager.h"
-
-#include <cassert>
+#include "../util/Logger.h"
 
 void HeapManager::handle_malloc(void* address, size_t size)
 {
@@ -8,7 +7,7 @@ void HeapManager::handle_malloc(void* address, size_t size)
 
     auto it = this->heapMap.find(hash);
 
-    assert(it == this->heapMap.end() || !it->second.active);
+    //Logger::ensure(it == this->heapMap.end() || !it->second.active, "block must be inactive");
     this->heapMap.insert({hash, HeapBlock(address, size)});
 }
 
@@ -22,7 +21,7 @@ void HeapManager::handle_free(void* address)
 {
     size_t hash = reinterpret_cast<size_t>(address);
     auto it = this->heapMap.find(hash);
-    assert(it != this->heapMap.end() && it->second.active);
+    //Logger::ensure(it != this->heapMap.end() && it->second.active, "block muse be active");
 
     it->second.free();
 }

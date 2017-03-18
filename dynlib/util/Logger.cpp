@@ -4,6 +4,7 @@
 #include <cstring>
 #include <cstdarg>
 #include <cstdio>
+#include <cstdlib>
 
 char Logger::buffer[512];
 
@@ -12,8 +13,17 @@ void Logger::log(const char* msg, ...)
     va_list args;
 
     va_start(args, msg);
-    vsprintf(Logger::buffer, msg, args);
+    vsnprintf(Logger::buffer, sizeof(Logger::buffer), msg, args);
     va_end(args);
 
     ::write(STDERR_FILENO, Logger::buffer, strlen(Logger::buffer));
+}
+
+void Logger::ensure(bool condition, const char* msg)
+{
+    if (!condition)
+    {
+        Logger::log(msg);
+        exit(1);
+    }
 }

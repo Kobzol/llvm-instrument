@@ -10,10 +10,5 @@
 
 class HelpPrinter {
 public:
-	static bool debug_mode;
-
-	static void print_client_help();
-    static void print_server_help();
-    
     static void print(int log_level, const char* string, ...);
 };

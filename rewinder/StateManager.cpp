@@ -129,10 +129,21 @@ void StateManager::storeSegments(const std::vector<MapSegment>& segments, pid_t 
 
 bool StateManager::shouldReadSegment(const MapSegment& segment) const
 {
-    return segment.readable && segment.writable && segment.path.find("libz3.so") == std::string::npos;
+    return
+            segment.readable &&
+            segment.writable &&
+            segment.path.find("libz3.so") == std::string::npos &&
+                    (segment.start < this->guardedStart ||
+                    segment.start + segment.length >= this->guardedStart + this->guardedLength);
 }
 
 bool StateManager::shouldWriteSegment(const MapSegment& segment) const
 {
     return segment.data != nullptr;
+}
+
+void StateManager::setGuardedArea(size_t start, size_t length)
+{
+    this->guardedStart = start;
+    this->guardedLength = length;
 }

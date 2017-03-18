@@ -13,6 +13,27 @@
 #include "State.h"
 #include "StateManager.h"
 
+static unsigned short PORT = 8888;
+
+std::vector<std::string> splitMessage(const std::string& message)
+{
+    std::vector<std::string> parts;
+
+    std::string prefix;
+    for (size_t i = 0; i < message.size(); i++)
+    {
+        if (message[i] == ' ')
+        {
+            parts.push_back(prefix);
+            prefix.clear();
+        }
+        else prefix += message[i];
+    }
+
+    parts.push_back(prefix);
+
+    return parts;
+}
 
 int run_child(int argc, char** argv, unsigned short port)
 {
@@ -51,42 +72,58 @@ int main(int argc, char** argv)
     pid_t pid = fork();
     if (!pid) // child
     {
-        exit(run_child(argc, argv, 8888));
+        exit(run_child(argc, argv, PORT));
     }
 
     int status;
     StateManager stateManager;
 
     Socket server;
-    server.bind(8888);
+    server.bind(PORT);
 
     // initial SIGTRAP
     waitpid(pid, &status, 0);
     ptrace(PTRACE_CONT, pid, nullptr, nullptr);
 
+    std::cerr << "Rewinder: child started" << std::endl;
+
     std::unique_ptr<Socket> client = server.accept();
-    std::cerr << "client connected" << std::endl;
+    std::cerr << "Rewinder: child connected" << std::endl;
+
+    std::string mmapArea = client->readline();
+    auto parts = splitMessage(mmapArea);
+    size_t start = std::stoul(parts[1], nullptr, 10);
+    size_t length = std::stoul(parts[2], nullptr, 10);
+    stateManager.setGuardedArea(start, length);
+
+    std::cerr << "Rewinder: child mmap area: " << (void*) start << ", " << length << " bytes" << std::endl;
 
     std::unique_ptr<State> state;
 
     // second stop
     while (true)
     {
-        int ret = waitpid(pid, &status, 0);
+        waitpid(pid, &status, 0);
         if (WIFSTOPPED(status) && WSTOPSIG(status) == SIGUSR1)
         {
+            std::cerr << "Rewinder: saving child" << std::endl;
             state = stateManager.save(pid);
             ptrace(PTRACE_CONT, pid, nullptr, nullptr);
         }
         else if (WIFSTOPPED(status) && WSTOPSIG(status) == SIGUSR2)
         {
+            std::cerr << "Rewinder: restoring child" << std::endl;
             stateManager.restore(pid, state.get());
             ptrace(PTRACE_CONT, pid, nullptr, nullptr);
         }
         else if (WIFEXITED(status))
         {
-            std::cerr << "Child exited with status " << WEXITSTATUS(status) << std::endl;
+            std::cerr << "Rewinder: child exited with status " << WEXITSTATUS(status) << std::endl;
             break;
+        }
+        else
+        {
+            std::cerr << "Rewinder: child stopped with signal " << WSTOPSIG(status) << std::endl;
         }
     }
 

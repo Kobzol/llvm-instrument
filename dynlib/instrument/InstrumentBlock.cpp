@@ -9,5 +9,5 @@ InstrumentBlock::InstrumentBlock(RuntimeContext* context): context(context)
 
 InstrumentBlock::~InstrumentBlock()
 {
-    context->stopInstrumentation();
+    this->context->stopInstrumentation();
 }

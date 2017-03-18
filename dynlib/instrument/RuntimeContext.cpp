@@ -36,5 +36,5 @@ void RuntimeContext::setMmapArea(void* address, size_t size)
 
 HeapManager* RuntimeContext::getHeapManager() const
 {
-    return heapManager;
+    return this->heapManager;
 }

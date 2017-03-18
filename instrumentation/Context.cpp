@@ -1,11 +1,8 @@
 #include "Context.h"
 
-#include <iostream>
-
 #include <llvm/IR/IntrinsicInst.h>
 #include <llvm/IR/DebugInfoMetadata.h>
 #include <instruction/InstructionDispatcher.h>
-#include <cxxabi.h>
 
 void Context::handleModule(llvm::Module* module)
 {
