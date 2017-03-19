@@ -1,7 +1,7 @@
 #pragma once
 
 #include <unordered_map>
-#include "memory/HeapBlock.h"
+#include "../memory/HeapBlock.h"
 
 class SymManager
 {

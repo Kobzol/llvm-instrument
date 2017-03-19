@@ -92,8 +92,8 @@ target_link_libraries(llvmSE ${Z3_LIB})
 
 # Dynamic library
 add_library(llvmSEDyn SHARED
-        dynlib/Callbacks.cpp
-        dynlib/SymManager.cpp
+        dynlib/MallocCallbacks.cpp
+        dynlib/symbolic/SymManager.cpp
         dynlib/memory/HeapBlock.cpp
         common/socket.cpp
         common/help_printer.cpp
@@ -101,9 +101,13 @@ add_library(llvmSEDyn SHARED
         dynlib/memory/StaticAllocator.h
         dynlib/instrument/RuntimeContext.cpp
         dynlib/memory/MmapAllocator.cpp
-        dynlib/util/Logger.cpp dynlib/instrument/InstrumentBlock.cpp dynlib/instrument/InstrumentBlock.h dynlib/memory/HeapManager.cpp dynlib/memory/HeapManager.h dynlib/memory/Allocator.h)
+        dynlib/util/Logger.cpp
+        dynlib/instrument/InstrumentBlock.cpp
+        dynlib/memory/HeapManager.cpp
+        dynlib/SECallbacks.cpp
+        dynlib/Common.cpp)
 target_link_libraries(llvmSEDyn dl)
-#target_link_libraries(llvmSEDyn ${Z3_LIB})
+target_link_libraries(llvmSEDyn ${Z3_LIB})
 
 
 # Rewinder
