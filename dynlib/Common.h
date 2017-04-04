@@ -8,11 +8,14 @@
 #include "instrument/InstrumentBlock.h"
 
 
+//#define LOG_ALLOC
+
+
 #define PUBLIC extern "C"
 #define CALLBACK(method) __se_##method
 
 #define STATIC_ALLOC_SIZE (4096)
-#define DYNAMIC_ALLOC_SIZE (512 * 1024 * 1024)
+#define DYNAMIC_ALLOC_SIZE (32 * 1024 * 1024)
 
 extern StaticAllocator<STATIC_ALLOC_SIZE> staticAllocator;
 extern MmapAllocator mmapAllocator;

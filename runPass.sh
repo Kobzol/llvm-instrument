@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-CLANG_PATH="/home/kobzol/libraries/llvm3.9-binaries"
+CLANG_PATH="/home/kobzol/libraries/llvm4.0-binaries"
 BUILD_DIR="cmake-build-debug"
 SRC_BITCODE_FILE=test.bc
 PASS_LL_FILE=test-opt.llvm
@@ -30,4 +30,5 @@ ${CLANG_PATH}/bin/clang++ -std=c++14 -g -O0 -o ${BUILD_DIR}/${EXE_FILE} ${BUILD_
 echo "Bitcode compiled"
 
 # launch program
-./${BUILD_DIR}/${REWINDER} ./${BUILD_DIR}/${EXE_FILE} ./${BUILD_DIR}/lib${DYNAMIC_LIBRARY}.so ./${BUILD_DIR}/ || exit 1
+#./${BUILD_DIR}/${REWINDER} ./${BUILD_DIR}/${EXE_FILE} ./${BUILD_DIR}/lib${DYNAMIC_LIBRARY}.so ./${BUILD_DIR}/ || exit 1
+LD_LIBRARY_PATH=./${BUILD_DIR} LD_PRELOAD=lib${DYNAMIC_LIBRARY}.so ./${BUILD_DIR}/${EXE_FILE} || exit 1

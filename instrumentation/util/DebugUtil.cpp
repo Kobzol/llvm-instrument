@@ -69,13 +69,13 @@ std::unique_ptr<DebugInfo> DebugUtil::getGlobalVarDebugInfo(const llvm::GlobalVa
         for (unsigned i = 0, e = cu->getNumOperands(); i != e; ++i)
         {
             auto* compileUnit = llvm::cast<llvm::DICompileUnit>(cu->getOperand(i));
-            for (llvm::DIGlobalVariable* globalDI : compileUnit->getGlobalVariables())
+            /*for (llvm::DIGlobalVariableExpression* globalDI : compileUnit->getGlobalVariables())
             {
-                if (globalDI->getVariable() == global)
+                if (globalDI->getVariable()-> == global)
                 {
                     return std::make_unique<DebugInfo>(globalDI);
                 }
-            }
+            }*/
         }
     }
 

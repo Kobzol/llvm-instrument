@@ -17,7 +17,7 @@ public:
         char* address = this->align(this->memory + index);
         this->index += size + (address - (this->memory + index));
 
-        Logger::ensure((reinterpret_cast<size_t>(address) & 15) == 0, "memory is 16-byte aligned");
+        Logger::ensure((reinterpret_cast<size_t>(address) & 7) == 0, "memory is 8-byte aligned");
 
         return address;
     }

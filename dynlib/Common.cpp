@@ -13,7 +13,9 @@ void initRuntime()
     initialized = true;
 
     mmapAllocator.init(DYNAMIC_ALLOC_SIZE);
-    runtimeContext = new (mmapAllocator.alloc(sizeof(RuntimeContext))) RuntimeContext();
+    void* mem = mmapAllocator.alloc(sizeof(RuntimeContext));
+
+    runtimeContext = new (mem) RuntimeContext();
     {
         IBlock block(runtimeContext);
         runtimeContext->init();

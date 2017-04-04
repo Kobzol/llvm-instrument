@@ -4,7 +4,7 @@ project(clang_test)
 set(CMAKE_VERBOSE_MAKEFILE ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
 
-set(CLANG_DIR "/home/kobzol/libraries/llvm3.9-binaries")
+set(CLANG_DIR "/home/kobzol/libraries/llvm4.0-binaries")
 set(Z3_DIR "/home/kobzol/libraries/z3/build/build")
 
 set(CMAKE_CXX_COMPILER "${CLANG_DIR}/bin/clang++")
@@ -32,6 +32,8 @@ set(CLANG_LIB
     clangEdit
     clangLex
     clangTooling
+    LLVMCoroutines
+    LLVMPasses
     LLVMLinker
     LLVMIRReader
     LLVMMIRParser # AsmParser
@@ -64,8 +66,12 @@ set(CLANG_LIB
     LLVMBitReader # Core, Support
     LLVMCore # Support
     LLVMSupport
+    LLVMDemangle
+    rt
     dl
+    tinfo
     pthread
+    m
 )
 
 add_library(instrumentation
@@ -105,7 +111,7 @@ add_library(llvmSEDyn SHARED
         dynlib/instrument/InstrumentBlock.cpp
         dynlib/memory/HeapManager.cpp
         dynlib/SECallbacks.cpp
-        dynlib/Common.cpp)
+        dynlib/Common.cpp dynlib/symbolic/Constraint.cpp dynlib/symbolic/Constraint.h)
 target_link_libraries(llvmSEDyn dl)
 target_link_libraries(llvmSEDyn ${Z3_LIB})
 
@@ -137,3 +143,4 @@ add_executable(input
         input/test.cpp
         common/socket.cpp
         common/help_printer.cpp)
+target_link_libraries(input llvmSEDyn)

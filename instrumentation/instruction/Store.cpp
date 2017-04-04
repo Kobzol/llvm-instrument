@@ -12,7 +12,7 @@ using namespace llvm;
 
 void Store::handle(Module* module, Instruction* instruction)
 {
-    StoreInst* st = static_cast<StoreInst*>(instruction);
+    /*StoreInst* st = static_cast<StoreInst*>(instruction);
     LLVMContext& ctx = module->getContext();
     Type* int64 = IntegerType::get(ctx, 64);
     PointerType* int64ptr = int64->getPointerTo();
@@ -44,5 +44,5 @@ void Store::handle(Module* module, Instruction* instruction)
     dst = CastInst::CreateSExtOrBitCast(dst, int64ptr, "", st);
 
     Function* fn = cast<Function>(callback);
-    CallInst::Create(fn, { dst, dstSize, src, srcSize }, "", st);
+    CallInst::Create(fn, { dst, dstSize, src, srcSize }, "", st);*/
 }

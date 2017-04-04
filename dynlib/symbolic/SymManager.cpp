@@ -1,34 +1,28 @@
 #include "SymManager.h"
+#include "../util/Logger.h"
 
-void SymManager::storeInt(void* memDst, size_t dstSize, void* memSrc, size_t srcSize)
+void SymManager::makeSymbolic(void* mem, size_t size)
 {
-
+    size_t addr = reinterpret_cast<size_t>(mem);
+    this->memoryConstraints.insert({addr, Constraint(&this->ctx, size)});
 }
 
-void SymManager::storeIntConstant(void* memDst, size_t dstSize, ssize_t constant, size_t srcSize)
+void SymManager::storeConst(void* memDst, size_t memSize, ssize_t constant, size_t constantSize)
 {
-
-}
-
-void SymManager::malloc(void* address, size_t size)
-{
-    size_t hash = reinterpret_cast<size_t>(address);
-    this->heap->insert({hash, HeapBlock(address, size)});
-}
-
-void SymManager::free(void* address)
-{
-    size_t hash = reinterpret_cast<size_t>(address);
-
-    auto it = this->heap->find(hash);
-    if (it != this->heap->end())
+    Constraint* constraint = this->getConstraint(memDst);
+    if (constraint != nullptr)
     {
-        (*this->heap)[hash].free();
+        Logger::ensure(memSize == constraint->getSize(), "sizes must match");
+
+        constraint->setConstant(constant, constantSize);
     }
 }
 
-void SymManager::realloc(void* originalAddress, void* newAddress, size_t size)
+Constraint* SymManager::getConstraint(void* mem)
 {
-    this->free(originalAddress);
-    this->malloc(newAddress, size);
+    size_t addr = reinterpret_cast<size_t>(mem);
+    auto it = this->memoryConstraints.find(addr);
+    if (it == this->memoryConstraints.end()) return nullptr;
+
+    return &it->second;
 }

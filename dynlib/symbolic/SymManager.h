@@ -2,22 +2,17 @@
 
 #include <unordered_map>
 #include "../memory/HeapBlock.h"
+#include "Constraint.h"
 
 class SymManager
 {
 public:
-    void storeInt(void* memDst, size_t dstSize, void* memSrc, size_t srcSize);
-    void storeIntConstant(void* memDst, size_t dstSize, ssize_t constant, size_t srcSize);
+    void makeSymbolic(void* mem, size_t size);
+    void storeConst(void* memDst, size_t memSize, ssize_t constant, size_t constantSize);
 
-    void malloc(void* address, size_t size);
-    void free(void* address);
+private:
+    Constraint* getConstraint(void* mem);
 
-    void init_fields()
-    {
-        if (this->heap == nullptr) this->heap = new std::unordered_map<size_t, HeapBlock>();
-    }
-
-    std::unordered_map<size_t, HeapBlock>* heap;
-
-    void realloc(void* originalAddress, void* newAddress, size_t size);
+    z3::context ctx;
+    std::unordered_map<size_t, Constraint> memoryConstraints;
 };

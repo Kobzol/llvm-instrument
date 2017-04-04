@@ -1,7 +1,5 @@
 #include "RuntimeContext.h"
-
-#include <cassert>
-#include <iostream>
+#include "../Common.h"
 
 bool RuntimeContext::isInstrumenting() const
 {
@@ -10,17 +8,18 @@ bool RuntimeContext::isInstrumenting() const
 
 void RuntimeContext::startInstrumentation()
 {
-    this->instrumentActive.store(true);
+    this->instrumentActive = true;
 }
 
 void RuntimeContext::stopInstrumentation()
 {
-    this->instrumentActive.store(false);
+    this->instrumentActive = false;
 }
 
 void RuntimeContext::init()
 {
-    this->heapManager = new HeapManager();
+    this->heapManager = new (mmapAllocator.alloc(sizeof(HeapManager))) HeapManager();
+    this->symManager = new (mmapAllocator.alloc(sizeof(SymManager))) SymManager();
 }
 
 void RuntimeContext::connect(const char* host, unsigned short port)
@@ -37,4 +36,9 @@ void RuntimeContext::setMmapArea(void* address, size_t size)
 HeapManager* RuntimeContext::getHeapManager() const
 {
     return this->heapManager;
+}
+
+SymManager* RuntimeContext::getSymManager() const
+{
+    return this->symManager;
 }

@@ -1,8 +1,8 @@
 #pragma once
 
-#include <atomic>
 #include "../../common/socket.h"
 #include "../memory/HeapManager.h"
+#include "../symbolic/SymManager.h"
 
 class RuntimeContext
 {
@@ -17,10 +17,12 @@ public:
     void setMmapArea(void* address, size_t size);
 
     HeapManager* getHeapManager() const;
+    SymManager* getSymManager() const;
 
 private:
-    std::atomic<bool> instrumentActive{false};
+    bool instrumentActive = false;
     Socket client;
 
     HeapManager* heapManager;
+    SymManager* symManager;
 };
