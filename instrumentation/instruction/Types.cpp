@@ -1,0 +1,21 @@
+#include "Types.h"
+
+#include <llvm/IR/Module.h>
+#include <llvm/IR/Type.h>
+
+using namespace llvm;
+
+Type* Types::voidType(Module* module)
+{
+    return Type::getVoidTy(module->getContext());
+}
+
+Type* Types::int8(Module* module)
+{
+    return Type::getInt8Ty(module->getContext());
+}
+
+Type* Types::int64(Module* module)
+{
+    return Type::getInt64Ty(module->getContext());
+}

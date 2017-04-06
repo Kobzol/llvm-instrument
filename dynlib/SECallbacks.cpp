@@ -18,11 +18,7 @@ PUBLIC void CALLBACK(init)()
     }
 }
 
-PUBLIC void CALLBACK(store_const)(void* memDst, size_t dstSize, ssize_t constant, size_t srcSize)
-{
-    runtimeContext->getSymManager()->storeConst(memDst, dstSize, constant, srcSize);
-}
-PUBLIC void CALLBACK(store_mem)(void* memDst, size_t dstSize, void* memSrc, size_t srcSize)
+PUBLIC void CALLBACK(store)(void* memDst, size_t dstSize, void* memSrc, size_t srcSize)
 {
 
 }
@@ -30,4 +26,23 @@ PUBLIC void CALLBACK(store_mem)(void* memDst, size_t dstSize, void* memSrc, size
 PUBLIC void CALLBACK(make_symbolic)(void* mem, size_t size)
 {
     runtimeContext->getSymManager()->makeSymbolic(mem, size);
+}
+
+PUBLIC void CALLBACK(print_addr)(void* mem)
+{
+    Logger::log("addr: %p\n", mem);
+}
+
+PUBLIC void* CALLBACK(expr_const)(size_t value, size_t size)
+{
+    Logger::log("expr_const: %lu (%lu bits)\n", value, size);
+
+    return nullptr;
+}
+
+PUBLIC void* CALLBACK(expr_add)(__SExpression* value, size_t size)
+{
+    //Logger::log("expr_const: %lu (%lu bits)\n", value, size);
+
+    return nullptr;
 }

@@ -14,11 +14,11 @@ pushd ./${BUILD_DIR}
 popd
 
 # generate LLVM IR
-${CLANG_PATH}/bin/clang++ -std=c++14 -emit-llvm -g -O0 -o ${BUILD_DIR}/${SRC_BITCODE_FILE} -c input/test.cpp || exit 1
+${CLANG_PATH}/bin/clang++ -std=c++14 -emit-llvm -O0 -o ${BUILD_DIR}/${SRC_BITCODE_FILE} -c input/test.cpp || exit 1
 echo "Bitcode generated"
 
 # run SE pass
-${CLANG_PATH}/bin/opt -S -load ${BUILD_DIR}/libllvmSE.so -se ${BUILD_DIR}/${SRC_BITCODE_FILE} -o ${BUILD_DIR}/${PASS_LL_FILE} || exit 1
+${CLANG_PATH}/bin/opt -S -load ${BUILD_DIR}/libllvmSE.so -reg2mem -se ${BUILD_DIR}/${SRC_BITCODE_FILE} -o ${BUILD_DIR}/${PASS_LL_FILE} || exit 1
 echo "Bitcode transformed"
 
 # compile to assembly

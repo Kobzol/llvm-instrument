@@ -1,0 +1,45 @@
+#include "Instrumenter.h"
+
+#include <llvm/IR/Function.h>
+#include <llvm/IR/Module.h>
+#include <llvm/IR/Instructions.h>
+#include <llvm/IR/IRBuilder.h>
+#include <llvm/Support/Debug.h>
+#include "util/Demangler.h"
+#include "ExprBuilder.h"
+#include "Types.h"
+#include "Values.h"
+
+using namespace llvm;
+
+void Instrumenter::instrumentMain(Module* module)
+{
+    Function* main = Demangler::get().getFunctionByDemangledName(module, "main");
+    assert(main);
+
+    BasicBlock& bb = main->getEntryBlock();
+    Instruction* instruction = bb.getFirstNonPHI();
+
+    IRBuilder<> builder(instruction);
+    builder.CreateCall(this->functionBuilder.getInitFunction(module));
+}
+
+void Instrumenter::instrumentStore(Module* module, StoreInst* store)
+{
+    Value* dst = store->getPointerOperand();
+    Value* src = store->getValueOperand();
+
+    IRBuilder<> builder(store);
+    builder.CreateCall(this->functionBuilder.getStoreFunction(module), {
+            CastInst::CreatePointerCast(dst, Types::int8(module)->getPointerTo(), "", store),
+            Values::int64(module, dst->getType()->getPointerElementType()->getPrimitiveSizeInBits()),
+            this->buildStoreExpression(module, src, store),
+            Values::int64(module, src->getType()->getPrimitiveSizeInBits())
+    });
+}
+
+Value* Instrumenter::buildStoreExpression(Module* module, Value* value, Instruction* insertionPoint)
+{
+    ExprBuilder builder(insertionPoint);
+    return builder.buildExpression(module, value);
+}

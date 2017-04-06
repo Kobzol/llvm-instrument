@@ -1,10 +1,12 @@
 #include "Context.h"
 
-#include <llvm/IR/IntrinsicInst.h>
-#include <llvm/IR/DebugInfoMetadata.h>
-#include <instruction/InstructionDispatcher.h>
+#include <llvm/IR/Instructions.h>
 
-void Context::handleModule(llvm::Module* module)
+#include <llvm/IR/Module.h>
+
+using namespace llvm;
+
+void Context::handleModule(Module* module)
 {
     this->instrumenter.instrumentMain(module);
 
@@ -12,12 +14,22 @@ void Context::handleModule(llvm::Module* module)
     {
         for (auto& block : fn.getBasicBlockList())
         {
-            llvm::Instruction* inst = block.getFirstNonPHI();
+            Instruction* inst = block.getFirstNonPHI();
             while (inst != nullptr)
             {
-                InstructionDispatcher::get().dispatch(module, inst);
+                this->instrument(module, inst);
                 inst = inst->getNextNode();
             }
         }
+    }
+
+    module->dump();
+}
+
+void Context::instrument(Module* module, Instruction* instruction)
+{
+    if (auto* store = dyn_cast<StoreInst>(instruction))
+    {
+        this->instrumenter.instrumentStore(module, store);
     }
 }

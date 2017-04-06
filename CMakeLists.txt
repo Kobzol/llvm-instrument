@@ -8,7 +8,7 @@ set(CLANG_DIR "/home/kobzol/libraries/llvm4.0-binaries")
 set(Z3_DIR "/home/kobzol/libraries/z3/build/build")
 
 set(CMAKE_CXX_COMPILER "${CLANG_DIR}/bin/clang++")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -fno-omit-frame-pointer -fno-limit-debug-info -std=c++14 -fno-rtti -Wsign-compare -Wall -pedantic -D__STDC_CONSTANT_MACROS -D__STDC_LIMIT_MACROS")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -fPIC -fno-omit-frame-pointer -fno-limit-debug-info -std=c++14 -fno-rtti -Wsign-compare -Wall -pedantic -D__STDC_CONSTANT_MACROS -D__STDC_LIMIT_MACROS")
 
 include_directories(${CLANG_DIR}/include)
 link_directories(${CLANG_DIR}/lib)
@@ -77,18 +77,19 @@ set(CLANG_LIB
 add_library(instrumentation
         instrumentation/Context.cpp
         instrumentation/Pass.cpp
-        instrumentation/instruction/InstructionDispatcher.cpp
-        instrumentation/instruction/InstructionHandler.cpp
-        instrumentation/instruction/Store.cpp
-        instrumentation/instruction/Call.cpp
         instrumentation/util/DebugUtil.cpp
         instrumentation/util/Logger.cpp
         instrumentation/util/DebugInfo.cpp
         instrumentation/util/compile/MemoryCompileAction.cpp
         instrumentation/util/compile/MemoryCompiler.cpp
         instrumentation/util/Util.cpp
-        instrumentation/Instrumenter.cpp
-        instrumentation/util/Demangler.cpp)
+        instrumentation/instruction/Instrumenter.cpp
+        instrumentation/util/Demangler.cpp
+        instrumentation/instruction/ExprBuilder.cpp
+        instrumentation/instruction/FunctionBuilder.cpp
+        instrumentation/instruction/Types.cpp
+        instrumentation/instruction/Values.cpp
+        )
 
 # LLVM pass
 add_library(llvmSE SHARED instrumentation/RegisterPass.cpp)
@@ -111,7 +112,9 @@ add_library(llvmSEDyn SHARED
         dynlib/instrument/InstrumentBlock.cpp
         dynlib/memory/HeapManager.cpp
         dynlib/SECallbacks.cpp
-        dynlib/Common.cpp dynlib/symbolic/Constraint.cpp dynlib/symbolic/Constraint.h)
+        dynlib/Common.cpp
+        dynlib/symbolic/Constraint.cpp
+        )
 target_link_libraries(llvmSEDyn dl)
 target_link_libraries(llvmSEDyn ${Z3_LIB})
 
