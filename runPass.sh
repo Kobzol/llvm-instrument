@@ -10,12 +10,13 @@ DYNAMIC_LIBRARY=llvmSEDyn
 REWINDER=rewinder
 
 pushd ./${BUILD_DIR}
-    make -j4 --silent
+    #make -j4 --silent
 popd
 
 # generate LLVM IR
 ${CLANG_PATH}/bin/clang++ -std=c++14 -emit-llvm -O0 -o ${BUILD_DIR}/${SRC_BITCODE_FILE} -c input/test.cpp || exit 1
 echo "Bitcode generated"
+exit 0
 
 # run SE pass
 ${CLANG_PATH}/bin/opt -S -load ${BUILD_DIR}/libllvmSE.so -reg2mem -se ${BUILD_DIR}/${SRC_BITCODE_FILE} -o ${BUILD_DIR}/${PASS_LL_FILE} || exit 1

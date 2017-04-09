@@ -8,7 +8,7 @@ set(CLANG_DIR "/home/kobzol/libraries/llvm4.0-binaries")
 set(Z3_DIR "/home/kobzol/libraries/z3/build/build")
 
 set(CMAKE_CXX_COMPILER "${CLANG_DIR}/bin/clang++")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -fPIC -fno-omit-frame-pointer -fno-limit-debug-info -std=c++14 -fno-rtti -Wsign-compare -Wall -pedantic -D__STDC_CONSTANT_MACROS -D__STDC_LIMIT_MACROS")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -fPIC -std=c++14 -Wsign-compare -Wall -fno-rtti -pedantic -D__STDC_CONSTANT_MACROS -D__STDC_LIMIT_MACROS ${LLVM_LIBS}")
 
 include_directories(${CLANG_DIR}/include)
 link_directories(${CLANG_DIR}/lib)
@@ -32,47 +32,140 @@ set(CLANG_LIB
     clangEdit
     clangLex
     clangTooling
-    LLVMCoroutines
+    LLVMLTO
     LLVMPasses
+    LLVMObjCARCOpts
+    LLVMMIRParser
+    LLVMSymbolize
+    LLVMDebugInfoPDB
+    LLVMDebugInfoDWARF
+    LLVMCoverage
+    LLVMTableGen
+    LLVMOrcJIT
+    LLVMXCoreDisassembler
+    LLVMXCoreCodeGen
+    LLVMXCoreDesc
+    LLVMXCoreInfo
+    LLVMXCoreAsmPrinter
+    LLVMSystemZDisassembler
+    LLVMSystemZCodeGen
+    LLVMSystemZAsmParser
+    LLVMSystemZDesc
+    LLVMSystemZInfo
+    LLVMSystemZAsmPrinter
+    LLVMSparcDisassembler
+    LLVMSparcCodeGen
+    LLVMSparcAsmParser
+    LLVMSparcDesc
+    LLVMSparcInfo
+    LLVMSparcAsmPrinter
+    LLVMRISCVDesc
+    LLVMRISCVCodeGen
+    LLVMRISCVInfo
+    LLVMPowerPCDisassembler
+    LLVMPowerPCCodeGen
+    LLVMPowerPCAsmParser
+    LLVMPowerPCDesc
+    LLVMPowerPCInfo
+    LLVMPowerPCAsmPrinter
+    LLVMNVPTXCodeGen
+    LLVMNVPTXDesc
+    LLVMNVPTXInfo
+    LLVMNVPTXAsmPrinter
+    LLVMMSP430CodeGen
+    LLVMMSP430Desc
+    LLVMMSP430Info
+    LLVMMSP430AsmPrinter
+    LLVMMipsDisassembler
+    LLVMMipsCodeGen
+    LLVMMipsAsmParser
+    LLVMMipsDesc
+    LLVMMipsInfo
+    LLVMMipsAsmPrinter
+    LLVMLanaiDisassembler
+    LLVMLanaiCodeGen
+    LLVMLanaiAsmParser
+    LLVMLanaiDesc
+    LLVMLanaiInstPrinter
+    LLVMLanaiInfo
+    LLVMHexagonDisassembler
+    LLVMHexagonCodeGen
+    LLVMHexagonAsmParser
+    LLVMHexagonDesc
+    LLVMHexagonInfo
+    LLVMBPFDisassembler
+    LLVMBPFCodeGen
+    LLVMBPFDesc
+    LLVMBPFInfo
+    LLVMBPFAsmPrinter
+    LLVMARMDisassembler
+    LLVMARMCodeGen
+    LLVMARMAsmParser
+    LLVMARMDesc
+    LLVMARMInfo
+    LLVMARMAsmPrinter
+    LLVMAMDGPUDisassembler
+    LLVMAMDGPUCodeGen
+    LLVMAMDGPUAsmParser
+    LLVMAMDGPUDesc
+    LLVMAMDGPUInfo
+    LLVMAMDGPUAsmPrinter
+    LLVMAMDGPUUtils
+    LLVMAArch64Disassembler
+    LLVMAArch64CodeGen
+    LLVMAArch64AsmParser
+    LLVMAArch64Desc
+    LLVMAArch64Info
+    LLVMAArch64AsmPrinter
+    LLVMAArch64Utils
+    LLVMObjectYAML
+    LLVMLibDriver
+    LLVMOption
+    LLVMX86Disassembler
+    LLVMX86AsmParser
+    LLVMX86CodeGen
+    LLVMGlobalISel
+    LLVMSelectionDAG
+    LLVMAsmPrinter
+    LLVMDebugInfoCodeView
+    LLVMDebugInfoMSF
+    LLVMX86Desc
+    LLVMMCDisassembler
+    LLVMX86Info
+    LLVMX86AsmPrinter
+    LLVMX86Utils
+    LLVMMCJIT
+    LLVMLineEditor
+    LLVMInterpreter
+    LLVMExecutionEngine
+    LLVMRuntimeDyld
+    LLVMCodeGen
+    LLVMTarget
+    LLVMCoroutines
+    LLVMipo
+    LLVMInstrumentation
+    LLVMVectorize
+    LLVMScalarOpts
     LLVMLinker
     LLVMIRReader
-    LLVMMIRParser # AsmParser
     LLVMAsmParser
-    LLVMBitWriter
-    LLVMLTO
-    LLVMObjCARCOpts
-    LLVMInstrumentation
-    LLVMX86AsmParser # MC, MCParser, Support, X86Desc, X86Info
-    LLVMX86Desc # MC, Support, X86AsmPrinter, X86Info
-    LLVMX86AsmPrinter # MC, Support, X86Utils
-    LLVMX86Info # MC, Support, Target
-    LLVMX86Utils # Core, Support
-    LLVMipo
-    LLVMCoverage
-    LLVMProfileData
-    LLVMScalarOpts
     LLVMInstCombine
-    LLVMCodeGen
     LLVMTransformUtils
-    LLVMVectorize
+    LLVMBitWriter
     LLVMAnalysis
-    LLVMTarget
-    LLVMOption # Support
-    LLVMMCParser # MC, Support
-    LLVMMCJIT
-    LLVMObject # BitReader, Core, Support
-    LLVMMC # Object, Support
-    LLVMExecutionEngine
-    LLVMBitReader # Core, Support
-    LLVMCore # Support
+    LLVMObject
+    LLVMMCParser
+    LLVMMC
+    LLVMBitReader
+    LLVMProfileData
+    LLVMCore
     LLVMSupport
     LLVMDemangle
     rt
     dl
     tinfo
     pthread
-    m
-)
+    m)
 
 add_library(instrumentation
         instrumentation/Context.cpp
@@ -117,6 +210,14 @@ add_library(llvmSEDyn SHARED
         )
 target_link_libraries(llvmSEDyn dl)
 target_link_libraries(llvmSEDyn ${Z3_LIB})
+
+
+# Interpret
+add_executable(llvmInterpret
+        interpret/Interpret.cpp
+        interpret/main.cpp interpret/Execution.cpp interpret/ExternalFunctions.cpp)
+target_link_libraries(llvmInterpret ffi)
+target_link_libraries(llvmInterpret ${CLANG_LIB})
 
 
 # Rewinder
