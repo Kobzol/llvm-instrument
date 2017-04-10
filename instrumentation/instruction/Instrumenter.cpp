@@ -33,13 +33,34 @@ void Instrumenter::instrumentStore(Module* module, StoreInst* store)
     builder.CreateCall(this->functionBuilder.getStoreFunction(module), {
             CastInst::CreatePointerCast(dst, Types::int8(module)->getPointerTo(), "", store),
             Values::int64(module, dst->getType()->getPointerElementType()->getPrimitiveSizeInBits()),
-            this->buildStoreExpression(module, src, store),
-            Values::int64(module, src->getType()->getPrimitiveSizeInBits())
+            this->buildStoreExpression(module, src, store)
     });
+}
+
+void Instrumenter::instrumentBranch(Module* module, BranchInst* branch)
+{
+    if (branch->isConditional())
+    {
+        BasicBlock* validLabel = branch->getSuccessor(0);
+        BasicBlock* invalidLabel = branch->getSuccessor(1);
+
+        IRBuilder<> builder(branch);
+        builder.CreateCall(this->functionBuilder.getBranchFunction(module), {
+                this->buildConditionExpression(module, branch),
+                BlockAddress::get(branch->getFunction(), validLabel),
+                BlockAddress::get(branch->getFunction(), invalidLabel)
+        });
+    }
 }
 
 Value* Instrumenter::buildStoreExpression(Module* module, Value* value, Instruction* insertionPoint)
 {
     ExprBuilder builder(insertionPoint);
     return builder.buildExpression(module, value);
+}
+
+Value* Instrumenter::buildConditionExpression(llvm::Module* module, llvm::BranchInst* branch)
+{
+    ExprBuilder builder(branch);
+    return builder.buildExpression(module, branch->getCondition());
 }

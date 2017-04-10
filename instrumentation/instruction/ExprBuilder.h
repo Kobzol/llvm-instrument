@@ -2,6 +2,7 @@
 
 #include <llvm/IR/Constant.h>
 #include <llvm/IR/InstrTypes.h>
+#include <llvm/IR/Instructions.h>
 #include "FunctionBuilder.h"
 
 class Instrumenter;
@@ -22,10 +23,11 @@ public:
     llvm::CallInst* buildExpression(llvm::Module* module, llvm::Value* value);
 
 private:
-    llvm::Instruction* insertionPoint;
-
     llvm::CallInst* buildConstant(llvm::Module* module, llvm::Constant* constant);
-    llvm::CallInst* buildBinOp(llvm::BinaryOperator* oper);
+    llvm::CallInst* buildBinOp(llvm::Module* module, llvm::BinaryOperator* oper);
+    llvm::CallInst* buildLoad(llvm::Module* module, llvm::LoadInst* load);
+    llvm::CallInst* buildIntegerCmp(llvm::Module* module, llvm::ICmpInst* instruction);
 
+    llvm::Instruction* insertionPoint;
     FunctionBuilder functionBuilder;
 };

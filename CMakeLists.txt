@@ -8,7 +8,7 @@ set(CLANG_DIR "/home/kobzol/libraries/llvm4.0-binaries")
 set(Z3_DIR "/home/kobzol/libraries/z3/build/build")
 
 set(CMAKE_CXX_COMPILER "${CLANG_DIR}/bin/clang++")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -fPIC -std=c++14 -Wsign-compare -Wall -fno-rtti -pedantic -D__STDC_CONSTANT_MACROS -D__STDC_LIMIT_MACROS ${LLVM_LIBS}")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -std=c++14 -Wsign-compare -Wall -fno-rtti -pedantic -D__STDC_CONSTANT_MACROS -D__STDC_LIMIT_MACROS ${LLVM_LIBS}")
 
 include_directories(${CLANG_DIR}/include)
 link_directories(${CLANG_DIR}/lib)
@@ -182,7 +182,7 @@ add_library(instrumentation
         instrumentation/instruction/FunctionBuilder.cpp
         instrumentation/instruction/Types.cpp
         instrumentation/instruction/Values.cpp
-        )
+        instrumentation/track/ValueRegistry.cpp instrumentation/track/ValueRegistry.h)
 
 # LLVM pass
 add_library(llvmSE SHARED instrumentation/RegisterPass.cpp)
@@ -207,7 +207,7 @@ add_library(llvmSEDyn SHARED
         dynlib/SECallbacks.cpp
         dynlib/Common.cpp
         dynlib/symbolic/Constraint.cpp
-        )
+        dynlib/symbolic/Constant.cpp dynlib/symbolic/Constant.h dynlib/symbolic/Concrete.cpp dynlib/symbolic/Concrete.h dynlib/symbolic/Add.cpp dynlib/symbolic/Add.h dynlib/symbolic/SymbolicInt.cpp dynlib/symbolic/SymbolicInt.h dynlib/symbolic/ICmp.cpp dynlib/symbolic/ICmp.h common/CmpType.h)
 target_link_libraries(llvmSEDyn dl)
 target_link_libraries(llvmSEDyn ${Z3_LIB})
 

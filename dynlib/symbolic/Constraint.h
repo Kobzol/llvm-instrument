@@ -8,14 +8,13 @@ class Constraint
 {
 public:
     Constraint(z3::context* ctx, size_t size);
+    ~Constraint();
 
     size_t getSize() const;
 
-    void setConstant(ssize_t constant, size_t size);
+    virtual void dump(int level = 0) = 0;
 
-private:
+protected:
     z3::context* ctx;
-    z3::expr expression;
-
     size_t size;
 };
