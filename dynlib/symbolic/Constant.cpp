@@ -10,3 +10,8 @@ void Constant::dump(int level)
 {
     Logger::log(level, "Constant %lu\n", this->value);
 }
+
+z3::expr Constant::createExpr()
+{
+    return this->ctx->int_val((unsigned long long) this->value);
+}

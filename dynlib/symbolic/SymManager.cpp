@@ -5,10 +5,15 @@
 #include "SymbolicInt.h"
 #include "ICmp.h"
 
+SymManager::SymManager(): pathCondition(&this->ctx)
+{
+
+}
+
 void SymManager::makeSymbolic(void* mem, size_t size)
 {
     size_t addr = reinterpret_cast<size_t>(mem);
-    this->memoryConstraints.insert({addr, new SymbolicInt(&this->ctx, size, mem)});
+    this->memoryConstraints[addr] = new SymbolicInt(&this->ctx, size, mem);
 }
 
 Constraint* SymManager::getConstraint(void* mem)
@@ -52,4 +57,16 @@ void SymManager::store(void* address, size_t size, Constraint* constraint)
 void* SymManager::exprICmp(Constraint* op1, Constraint* op2, CmpType conditionType)
 {
     return new ICmp(&this->ctx, op1, op2, conditionType);
+}
+
+void SymManager::branch(ICmp* condition, bool concreteCondition, void* trueLabel, void* falseLabel)
+{
+    z3::expr expr = condition->createExpr();
+    if (!concreteCondition)
+    {
+        expr = !expr;
+    }
+
+    this->pathCondition.addCondition(expr);
+    this->pathCondition.dump();
 }

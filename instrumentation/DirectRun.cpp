@@ -1,7 +1,7 @@
 #include <fstream>
+#include <sstream>
 
 #include "util/compile/MemoryCompiler.h"
-#include "util/Logger.h"
 
 
 std::string readFile(const char* path)

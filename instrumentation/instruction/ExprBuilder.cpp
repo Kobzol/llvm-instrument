@@ -94,7 +94,7 @@ CallInst* ExprBuilder::buildLoad(Module* module, LoadInst* load)
     IRBuilder<> builder(this->insertionPoint);
     return builder.CreateCall(loadFn, {
             builder.CreateBitOrPointerCast(load->getPointerOperand(), Types::voidPtr(module)),
-            Values::int64(module, load->getPointerOperand()->getType()->getPrimitiveSizeInBits())
+            Values::int64(module, load->getPointerOperand()->getType()->getPrimitiveSizeInBits()) // TODO: 0 size
     });
 }
 

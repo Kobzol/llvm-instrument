@@ -14,10 +14,13 @@ Type* Types::int8(Module* module)
 {
     return Type::getInt8Ty(module->getContext());
 }
-
 Type* Types::int64(Module* module)
 {
     return Type::getInt64Ty(module->getContext());
+}
+Type* Types::boolType(Module* module)
+{
+    return Type::getInt1Ty(module->getContext());
 }
 
 Type* Types::voidPtr(Module* module)

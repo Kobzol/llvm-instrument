@@ -14,3 +14,8 @@ size_t Constraint::getSize() const
 {
     return this->size;
 }
+
+z3::expr Constraint::createExpr()
+{
+    return z3::expr(*this->ctx);
+}

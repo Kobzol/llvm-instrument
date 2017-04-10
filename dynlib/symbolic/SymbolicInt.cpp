@@ -10,3 +10,8 @@ void SymbolicInt::dump(int level)
 {
     Logger::log(level, "SymbolicInt at %p\n", this->address);
 }
+
+z3::expr SymbolicInt::createExpr()
+{
+    return this->ctx->int_const(("0x" + std::to_string(reinterpret_cast<size_t>(this->address))).c_str());
+}

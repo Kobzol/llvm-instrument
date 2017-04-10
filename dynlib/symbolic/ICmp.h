@@ -8,7 +8,9 @@ class ICmp : public Constraint
 public:
     ICmp(z3::context* ctx, Constraint* op1, Constraint* op2, CmpType cmpType);
 
-    void dump(int level) override;
+    z3::expr createExpr() override;
+
+    void dump(int level = 0) override;
 
 private:
     Constraint* op1;

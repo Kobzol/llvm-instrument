@@ -12,6 +12,7 @@ public:
 
     size_t getSize() const;
 
+    virtual z3::expr createExpr();
     virtual void dump(int level = 0) = 0;
 
 protected:

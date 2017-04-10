@@ -47,6 +47,7 @@ void Instrumenter::instrumentBranch(Module* module, BranchInst* branch)
         IRBuilder<> builder(branch);
         builder.CreateCall(this->functionBuilder.getBranchFunction(module), {
                 this->buildConditionExpression(module, branch),
+                branch->getCondition(),
                 BlockAddress::get(branch->getFunction(), validLabel),
                 BlockAddress::get(branch->getFunction(), invalidLabel)
         });

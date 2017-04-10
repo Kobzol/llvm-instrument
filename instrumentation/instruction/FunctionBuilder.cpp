@@ -61,11 +61,11 @@ llvm::Function* FunctionBuilder::getExprAdd(llvm::Module* module)
 llvm::Function* FunctionBuilder::getExprICmp(llvm::Module* module)
 {
     return cast<Function>(module->getOrInsertFunction(this->getName("expr_icmp"),
-                                                 Types::voidPtr(module),
-                                                 Types::voidPtr(module),
-                                                 Types::voidPtr(module),
-                                                 Types::int64(module),
-                                                 nullptr));
+                                                      Types::voidPtr(module),
+                                                      Types::voidPtr(module),
+                                                      Types::voidPtr(module),
+                                                      Types::int64(module),
+                                                      nullptr));
 }
 
 llvm::Function* FunctionBuilder::getBranchFunction(llvm::Module* module)
@@ -73,6 +73,7 @@ llvm::Function* FunctionBuilder::getBranchFunction(llvm::Module* module)
     return cast<Function>(module->getOrInsertFunction(this->getName("branch"),
                                                       Types::voidType(module),
                                                       Types::voidPtr(module),
+                                                      Types::boolType(module),
                                                       Types::voidPtr(module),
                                                       Types::voidPtr(module),
                                                       nullptr));

@@ -14,3 +14,7 @@ void Add::dump(int level)
     this->op2->dump(level + 1);
 }
 
+z3::expr Add::createExpr()
+{
+    return this->op1->createExpr() + this->op2->createExpr();
+}

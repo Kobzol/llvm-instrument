@@ -13,3 +13,8 @@ void ICmp::dump(int level)
     this->op1->dump(level + 1);
     this->op2->dump(level + 1);
 }
+
+z3::expr ICmp::createExpr()
+{
+    return this->op1->createExpr() == this->op2->createExpr();
+}

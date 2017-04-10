@@ -182,7 +182,7 @@ add_library(instrumentation
         instrumentation/instruction/FunctionBuilder.cpp
         instrumentation/instruction/Types.cpp
         instrumentation/instruction/Values.cpp
-        instrumentation/track/ValueRegistry.cpp instrumentation/track/ValueRegistry.h)
+        instrumentation/track/ValueRegistry.cpp)
 
 # LLVM pass
 add_library(llvmSE SHARED instrumentation/RegisterPass.cpp)
@@ -207,7 +207,12 @@ add_library(llvmSEDyn SHARED
         dynlib/SECallbacks.cpp
         dynlib/Common.cpp
         dynlib/symbolic/Constraint.cpp
-        dynlib/symbolic/Constant.cpp dynlib/symbolic/Constant.h dynlib/symbolic/Concrete.cpp dynlib/symbolic/Concrete.h dynlib/symbolic/Add.cpp dynlib/symbolic/Add.h dynlib/symbolic/SymbolicInt.cpp dynlib/symbolic/SymbolicInt.h dynlib/symbolic/ICmp.cpp dynlib/symbolic/ICmp.h common/CmpType.h)
+        dynlib/symbolic/Constant.cpp
+        dynlib/symbolic/Concrete.cpp
+        dynlib/symbolic/Add.cpp
+        dynlib/symbolic/SymbolicInt.cpp
+        dynlib/symbolic/ICmp.cpp
+        dynlib/path/PathCondition.cpp)
 target_link_libraries(llvmSEDyn dl)
 target_link_libraries(llvmSEDyn ${Z3_LIB})
 
@@ -215,7 +220,8 @@ target_link_libraries(llvmSEDyn ${Z3_LIB})
 # Interpret
 add_executable(llvmInterpret
         interpret/Interpret.cpp
-        interpret/main.cpp interpret/Execution.cpp interpret/ExternalFunctions.cpp)
+        interpret/main.cpp interpret/Execution.cpp
+        interpret/ExternalFunctions.cpp)
 target_link_libraries(llvmInterpret ffi)
 target_link_libraries(llvmInterpret ${CLANG_LIB})
 
@@ -234,8 +240,7 @@ add_dependencies(rewinder input)
 
 # Direct run
 set (RUN_SOURCE_FILES
-        instrumentation/DirectRun.cpp
-        dynlib/util/Logger.cpp dynlib/util/Logger.h)
+        instrumentation/DirectRun.cpp)
 add_executable(direct ${RUN_SOURCE_FILES})
 target_link_libraries(direct instrumentation)
 target_link_libraries(direct ${CLANG_LIB})
