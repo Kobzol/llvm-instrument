@@ -22,7 +22,7 @@ void Context::handleModule(Module* module)
         }
     }
 
-    module->dump();
+    //module->dump();
 }
 
 void Context::instrument(Module* module, Instruction* instruction)

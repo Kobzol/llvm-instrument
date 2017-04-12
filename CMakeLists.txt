@@ -5,7 +5,7 @@ set(CMAKE_VERBOSE_MAKEFILE ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
 
 set(CLANG_DIR "/home/kobzol/libraries/llvm4.0-binaries")
-set(Z3_DIR "/home/kobzol/libraries/z3/build/build")
+set(Z3_DIR "/home/kobzol/libraries/z3-4.5.0/build/build")
 
 set(CMAKE_CXX_COMPILER "${CLANG_DIR}/bin/clang++")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -std=c++14 -Wsign-compare -Wall -fno-rtti -pedantic -D__STDC_CONSTANT_MACROS -D__STDC_LIMIT_MACROS ${LLVM_LIBS}")
@@ -13,10 +13,8 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -std=c++14 -Wsign-compare -Wall -f
 include_directories(${CLANG_DIR}/include)
 link_directories(${CLANG_DIR}/lib)
 
-include_directories(${Z3_DIR}/include)
-link_directories(${Z3_DIR}/lib)
-
-include_directories(${PROJECT_SOURCE_DIR}/instrumentation)
+#include_directories(${Z3_DIR}/include)
+#link_directories(${Z3_DIR}/lib)
 
 set(Z3_LIB z3)
 set(CLANG_LIB
@@ -212,7 +210,8 @@ add_library(llvmSEDyn SHARED
         dynlib/symbolic/Add.cpp
         dynlib/symbolic/SymbolicInt.cpp
         dynlib/symbolic/ICmp.cpp
-        dynlib/path/PathCondition.cpp)
+        dynlib/path/PathCondition.cpp
+        dynlib/util/Formatter.cpp)
 target_link_libraries(llvmSEDyn dl)
 target_link_libraries(llvmSEDyn ${Z3_LIB})
 

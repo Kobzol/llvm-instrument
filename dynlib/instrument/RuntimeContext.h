@@ -19,6 +19,8 @@ public:
     HeapManager* getHeapManager() const;
     SymManager* getSymManager() const;
 
+    bool ownsMemory(void* address);
+
 private:
     bool instrumentActive = false;
     Socket client;

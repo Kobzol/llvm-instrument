@@ -1,3 +1,4 @@
+#include "../util/Logger.h"
 #include "SymManager.h"
 #include "Constant.h"
 #include "Concrete.h"
@@ -64,8 +65,10 @@ void SymManager::branch(ICmp* condition, bool concreteCondition, void* trueLabel
     z3::expr expr = condition->createExpr();
     if (!concreteCondition)
     {
-        expr = !expr;
+        //expr = !expr;
     }
+
+    Logger::log("SAT: %d\n", this->pathCondition.isSatisfiable(expr));
 
     this->pathCondition.addCondition(expr);
     this->pathCondition.dump();

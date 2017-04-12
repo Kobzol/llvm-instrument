@@ -63,7 +63,6 @@ PUBLIC void* CALLBACK(expr_icmp)(void* op1, void* op2, size_t type)
             static_cast<Constraint*>(op1), static_cast<Constraint*>(op2), static_cast<CmpType>(type));
 }
 
-
 PUBLIC void CALLBACK(branch)(void* condition, bool concreteCondition, void* trueLabel, void* falseLabel)
 {
     IBlock block(runtimeContext);

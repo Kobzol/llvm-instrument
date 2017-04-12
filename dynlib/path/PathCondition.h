@@ -11,6 +11,8 @@ public:
 
     void dump();
 
+    bool isSatisfiable(const z3::expr& expr);
+
 private:
     z3::context* ctx;
     z3::expr condition;

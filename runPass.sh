@@ -14,7 +14,7 @@ pushd ./${BUILD_DIR}
 popd
 
 # generate LLVM IR
-${CLANG_PATH}/bin/clang++ -std=c++14 -emit-llvm -O0 -o ${BUILD_DIR}/${SRC_BITCODE_FILE} -c input/test.cpp || exit 1
+${CLANG_PATH}/bin/clang++ -std=c++14 -emit-llvm -g -O0 -o ${BUILD_DIR}/${SRC_BITCODE_FILE} -c input/test.cpp || exit 1
 echo "Bitcode generated"
 
 # run SE pass
@@ -26,7 +26,7 @@ ${CLANG_PATH}/bin/llc -filetype=asm -o ${BUILD_DIR}/${ASSEMBLY_FILE} ${BUILD_DIR
 echo "Bitcode assembled"
 
 # compile to native
-${CLANG_PATH}/bin/clang++ -std=c++14 -O0 -o ${BUILD_DIR}/${EXE_FILE} ${BUILD_DIR}/${ASSEMBLY_FILE} -L./${BUILD_DIR} -l${DYNAMIC_LIBRARY} || exit 1
+${CLANG_PATH}/bin/clang++ -std=c++14 -g -O0 -o ${BUILD_DIR}/${EXE_FILE} ${BUILD_DIR}/${ASSEMBLY_FILE} -L./${BUILD_DIR} -l${DYNAMIC_LIBRARY} || exit 1
 echo "Bitcode compiled"
 
 # launch program

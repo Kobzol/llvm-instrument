@@ -5,12 +5,13 @@ MmapAllocator mmapAllocator;
 LinkerManager linkerManager;
 RuntimeContext* runtimeContext;
 std::recursive_mutex mutex;
+bool runtimeInitialized = false;
+bool mallocInProgress = false;
 
 void initRuntime()
 {
-    static bool initialized = false;
-    if (initialized) return;
-    initialized = true;
+    if (runtimeInitialized) return;
+    runtimeInitialized = true;
 
     mmapAllocator.init(DYNAMIC_ALLOC_SIZE);
     void* mem = mmapAllocator.alloc(sizeof(RuntimeContext));

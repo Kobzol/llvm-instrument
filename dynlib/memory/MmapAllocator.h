@@ -13,9 +13,12 @@ public:
     void* alloc(size_t address);
     void* realloc(void* oldAddress, size_t size);
 
+    bool ownsMemory(void* address);
+
 private:
     char* base = nullptr;
     char* memory = nullptr;
+    size_t size = 0;
 
     size_t getBlockSize(void* addr)
     {

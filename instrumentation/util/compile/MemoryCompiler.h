@@ -3,9 +3,9 @@
 #include <string>
 
 #include <llvm/IR/Module.h>
-#include <Pass.h>
+#include "../../Pass.h"
 
-#include "util/Singleton.h"
+#include "../Singleton.h"
 
 class MemoryCompiler : public Singleton<MemoryCompiler>
 {

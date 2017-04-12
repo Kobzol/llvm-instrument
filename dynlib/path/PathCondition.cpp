@@ -20,3 +20,11 @@ void PathCondition::dump()
     const char* str = Z3_ast_to_string(*this->ctx, this->condition);
     Logger::log("PC: %s\n", str);
 }
+
+bool PathCondition::isSatisfiable(const expr& expr)
+{
+    solver solver(*this->ctx);
+    solver.add(this->condition && expr);
+
+    return solver.check() == check_result::sat;
+}
