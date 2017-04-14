@@ -6,6 +6,7 @@
 #include "../../common/CmpType.h"
 #include "../path/PathCondition.h"
 #include "ICmp.h"
+#include "../memory/HeapManager.h"
 
 class SymManager
 {
@@ -14,13 +15,15 @@ public:
 
     void makeSymbolic(void* mem, size_t size);
 
-    void* exprConst(size_t value, size_t size);
-    void* exprLoad(void* address, size_t size);
-    void* exprAdd(Constraint* op1, Constraint* op2, size_t size);
-    void* exprICmp(Constraint* op1, Constraint* op2, CmpType conditionType);
+    Constraint* exprConst(size_t value, size_t size);
+    Constraint* exprLoad(void* address, size_t size);
+    Constraint* exprAdd(Constraint* op1, Constraint* op2, size_t size);
+    Constraint* exprICmp(Constraint* op1, Constraint* op2, CmpType conditionType);
 
     void store(void* address, size_t size, Constraint* constraint);
     void branch(ICmp* condition, bool concreteCondition, void* trueLabel, void* falseLabel);
+
+    void checkGEP(HeapManager* heapManager, void* address, Constraint* indexer);
 
 private:
     Constraint* getConstraint(void* mem);

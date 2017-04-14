@@ -21,22 +21,38 @@ void Instrumenter::instrumentMain(Module* module)
     Instruction* instruction = bb.getFirstNonPHI();
 
     IRBuilder<> builder(instruction);
-    builder.CreateCall(this->functionBuilder.getInitFunction(module));
+    builder.CreateCall(this->functionBuilder.init(module));
 }
-
 void Instrumenter::instrumentStore(Module* module, StoreInst* store)
 {
+    IRBuilder<> builder(store);
+
     Value* dst = store->getPointerOperand();
     Value* src = store->getValueOperand();
 
-    IRBuilder<> builder(store);
-    builder.CreateCall(this->functionBuilder.getStoreFunction(module), {
+    builder.CreateCall(this->functionBuilder.store(module), {
             CastInst::CreatePointerCast(dst, Types::int8(module)->getPointerTo(), "", store),
             Values::int64(module, dst->getType()->getPointerElementType()->getPrimitiveSizeInBits()),
-            this->buildStoreExpression(module, src, store)
+            this->buildExpression(module, src, store)
     });
 }
+void Instrumenter::instrumentLoad(Module* module, LoadInst* load)
+{
+    IRBuilder<> builder(load);
 
+    Value* src = load->getPointerOperand();
+    if (auto* gep = dyn_cast<GetElementPtrInst>(src))
+    {
+        Value* buffer = gep->getPointerOperand();
+        Value* operand = gep->getOperand(1);    // TODO more indices
+
+        Value* indexExpression = this->buildExpression(module, operand, load);
+        builder.CreateCall(this->functionBuilder.checkGEP(module), {
+                CastInst::CreatePointerCast(buffer, Types::int8(module)->getPointerTo(), "", load),
+                indexExpression
+        });
+    }
+}
 void Instrumenter::instrumentBranch(Module* module, BranchInst* branch)
 {
     if (branch->isConditional())
@@ -45,8 +61,8 @@ void Instrumenter::instrumentBranch(Module* module, BranchInst* branch)
         BasicBlock* invalidLabel = branch->getSuccessor(1);
 
         IRBuilder<> builder(branch);
-        builder.CreateCall(this->functionBuilder.getBranchFunction(module), {
-                this->buildConditionExpression(module, branch),
+        builder.CreateCall(this->functionBuilder.branch(module), {
+                this->buildExpression(module, branch->getCondition(), branch),
                 branch->getCondition(),
                 BlockAddress::get(branch->getFunction(), validLabel),
                 BlockAddress::get(branch->getFunction(), invalidLabel)
@@ -54,14 +70,8 @@ void Instrumenter::instrumentBranch(Module* module, BranchInst* branch)
     }
 }
 
-Value* Instrumenter::buildStoreExpression(Module* module, Value* value, Instruction* insertionPoint)
+Value* Instrumenter::buildExpression(Module* module, Value* value, Instruction* insertionPoint)
 {
     ExprBuilder builder(insertionPoint);
     return builder.buildExpression(module, value);
-}
-
-Value* Instrumenter::buildConditionExpression(llvm::Module* module, llvm::BranchInst* branch)
-{
-    ExprBuilder builder(branch);
-    return builder.buildExpression(module, branch->getCondition());
 }

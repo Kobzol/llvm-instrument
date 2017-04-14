@@ -8,10 +8,14 @@
 class HeapManager
 {
 public:
-    void handle_malloc(void* address, size_t size);
-    void handle_realloc(void* oldAddress, void* newAddress, size_t size);
-    void handle_free(void* address);
+    void handleMalloc(void* address, size_t size);
+    void handleRealloc(void* oldAddress, void* newAddress, size_t size);
+    void handleFree(void* address);
+
+    HeapBlock* getBlock(void* address);
 
 private:
+    size_t hashAddress(void* address) const;
+
     std::unordered_map<size_t, HeapBlock> heapMap;
 };

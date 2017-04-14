@@ -12,8 +12,8 @@ public:
 
     size_t getSize() const;
 
-    virtual z3::expr createExpr();
-    virtual void dump(int level = 0) = 0;
+    virtual z3::expr createExpr() = 0;
+    __attribute((noinline)) virtual void dump(int level = 0) = 0;
 
 protected:
     z3::context* ctx;

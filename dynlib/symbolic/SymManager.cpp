@@ -25,22 +25,24 @@ Constraint* SymManager::getConstraint(void* mem)
     return it->second;
 }
 
-void* SymManager::exprConst(size_t value, size_t size)
+Constraint* SymManager::exprConst(size_t value, size_t size)
 {
     return new Constant(&this->ctx, size, value);
 }
-
-void* SymManager::exprLoad(void* address, size_t size)
+Constraint* SymManager::exprLoad(void* address, size_t size)
 {
     Constraint* constraint = this->getConstraint(address);
     if (constraint != nullptr) return constraint;
 
     return new Concrete(&this->ctx, size, address);
 }
-
-void* SymManager::exprAdd(Constraint* op1, Constraint* op2, size_t size)
+Constraint* SymManager::exprAdd(Constraint* op1, Constraint* op2, size_t size)
 {
     return new Add(&this->ctx, size, op1, op2);
+}
+Constraint* SymManager::exprICmp(Constraint* op1, Constraint* op2, CmpType conditionType)
+{
+    return new ICmp(&this->ctx, op1, op2, conditionType);
 }
 
 size_t SymManager::hashAddr(void* addr)
@@ -54,12 +56,6 @@ void SymManager::store(void* address, size_t size, Constraint* constraint)
     size_t addr = reinterpret_cast<size_t>(address);
     this->memoryConstraints[addr] = constraint;
 }
-
-void* SymManager::exprICmp(Constraint* op1, Constraint* op2, CmpType conditionType)
-{
-    return new ICmp(&this->ctx, op1, op2, conditionType);
-}
-
 void SymManager::branch(ICmp* condition, bool concreteCondition, void* trueLabel, void* falseLabel)
 {
     z3::expr expr = condition->createExpr();
@@ -68,8 +64,27 @@ void SymManager::branch(ICmp* condition, bool concreteCondition, void* trueLabel
         //expr = !expr;
     }
 
-    Logger::log("SAT: %d\n", this->pathCondition.isSatisfiable(expr));
+    //Logger::log("SAT: %d\n", this->pathCondition.isSatisfiable(expr));
 
     this->pathCondition.addCondition(expr);
-    this->pathCondition.dump();
+}
+
+void SymManager::checkGEP(HeapManager* heapManager, void* address, Constraint* indexer)
+{
+    Logger::log("Checking GEP (buffer at %p)\n", address);
+
+    const HeapBlock* block = heapManager->getBlock(address);
+    if (block != nullptr)
+    {
+        Logger::log("GEP block found, block size %lu\n", block->getSize());
+        indexer->dump(1);
+        z3::expr indexerExpr = indexer->createExpr();
+        z3::expr biggerIndex = indexerExpr >= this->ctx.int_val((unsigned long long) block->getSize());
+        Logger::log("%s\n", Logger::stringify(biggerIndex));
+        if (this->pathCondition.isSatisfiable(biggerIndex))
+        {
+            Logger::log("Access out of bounds possible\n");
+        }
+    }
+    else Logger::log("GEP block not found\n");
 }

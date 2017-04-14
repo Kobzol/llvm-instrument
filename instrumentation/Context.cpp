@@ -22,7 +22,7 @@ void Context::handleModule(Module* module)
         }
     }
 
-    //module->dump();
+    module->dump();
 }
 
 void Context::instrument(Module* module, Instruction* instruction)
@@ -30,6 +30,10 @@ void Context::instrument(Module* module, Instruction* instruction)
     if (auto* store = dyn_cast<StoreInst>(instruction))
     {
         this->instrumenter.instrumentStore(module, store);
+    }
+    else if (auto* load = dyn_cast<LoadInst>(instruction))
+    {
+        this->instrumenter.instrumentLoad(module, load);
     }
     else if (auto* br = dyn_cast<BranchInst>(instruction))
     {

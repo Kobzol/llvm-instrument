@@ -3,7 +3,7 @@
 #include <llvm/IR/Constant.h>
 #include <llvm/IR/InstrTypes.h>
 #include <llvm/IR/Instructions.h>
-#include "FunctionBuilder.h"
+#include "Functions.h"
 
 class Instrumenter;
 
@@ -20,14 +20,16 @@ class ExprBuilder
 public:
     ExprBuilder(llvm::Instruction* insertionPoint);
 
-    llvm::CallInst* buildExpression(llvm::Module* module, llvm::Value* value);
+    llvm::Value* buildExpression(llvm::Module* module, llvm::Value* value);
 
 private:
-    llvm::CallInst* buildConstant(llvm::Module* module, llvm::Constant* constant);
-    llvm::CallInst* buildBinOp(llvm::Module* module, llvm::BinaryOperator* oper);
-    llvm::CallInst* buildLoad(llvm::Module* module, llvm::LoadInst* load);
-    llvm::CallInst* buildIntegerCmp(llvm::Module* module, llvm::ICmpInst* instruction);
+    llvm::Value* buildConstant(llvm::Module* module, llvm::Constant* constant);
+    llvm::Value* buildBinOp(llvm::Module* module, llvm::BinaryOperator* oper);
+    llvm::Value* buildLoad(llvm::Module* module, llvm::LoadInst* load);
+    llvm::Value* buildIntegerCmp(llvm::Module* module, llvm::ICmpInst* instruction);
+    llvm::Value* buildCall(llvm::Module* module, llvm::CallInst* call);
+    llvm::Value* buildCast(llvm::Module* module, llvm::CastInst* cast);
 
     llvm::Instruction* insertionPoint;
-    FunctionBuilder functionBuilder;
+    Functions functionBuilder;
 };

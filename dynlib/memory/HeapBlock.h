@@ -19,6 +19,20 @@ public:
         this->active = false;
     }
 
+    void* getAddress() const
+    {
+        return this->address;
+    }
+    bool isActive() const
+    {
+        return this->active;
+    }
+    size_t getSize() const
+    {
+        return this->size;
+    }
+
+private:
     void* address;
     size_t size;
     bool active;

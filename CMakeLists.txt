@@ -177,7 +177,7 @@ add_library(instrumentation
         instrumentation/instruction/Instrumenter.cpp
         instrumentation/util/Demangler.cpp
         instrumentation/instruction/ExprBuilder.cpp
-        instrumentation/instruction/FunctionBuilder.cpp
+        instrumentation/instruction/Functions.cpp
         instrumentation/instruction/Types.cpp
         instrumentation/instruction/Values.cpp
         instrumentation/track/ValueRegistry.cpp)

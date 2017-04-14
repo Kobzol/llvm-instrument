@@ -22,9 +22,10 @@ PUBLIC void CALLBACK(init)()
 
 PUBLIC void CALLBACK(store)(void* memDst, size_t dstSize, void* memSrc)
 {
+    if (!memSrc) return;
+
     IBlock block(runtimeContext);
     Constraint* constraint = static_cast<Constraint*>(memSrc);
-    constraint->dump();
     runtimeContext->getSymManager()->store(memDst, dstSize, constraint);
 }
 
@@ -67,8 +68,16 @@ PUBLIC void CALLBACK(branch)(void* condition, bool concreteCondition, void* true
 {
     IBlock block(runtimeContext);
 
-    ICmp* cond = static_cast<ICmp*>(condition);
-    cond->dump();
+    if (condition == nullptr) return;
 
+    ICmp* cond = static_cast<ICmp*>(condition);
     runtimeContext->getSymManager()->branch(cond, concreteCondition, trueLabel, falseLabel);
+}
+
+PUBLIC void CALLBACK(checkGEP)(void* address, void* index)
+{
+    IBlock block(runtimeContext);
+
+    Constraint* indexer = static_cast<Constraint*>(index);
+    runtimeContext->getSymManager()->checkGEP(runtimeContext->getHeapManager(), address, indexer);
 }

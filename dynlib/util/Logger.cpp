@@ -2,9 +2,7 @@
 
 #include <unistd.h>
 #include <cstring>
-#include <cstdarg>
-#include <cstdio>
-#include <cstdlib>
+#include <z3.h>
 
 char Logger::buffer[512];
 
@@ -38,4 +36,9 @@ void Logger::ensure(bool condition, const char* msg)
         Logger::log(msg);
         exit(1);
     }
+}
+
+const char* Logger::stringify(const z3::expr& expr)
+{
+    return Z3_ast_to_string(expr.ctx(), expr);
 }

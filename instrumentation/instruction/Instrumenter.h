@@ -1,13 +1,15 @@
 #pragma once
 
 #include <cstddef>
+#include <llvm/IR/Instructions.h>
 
-#include "FunctionBuilder.h"
+#include "Functions.h"
 
 namespace llvm {
     class BranchInst;
     class Module;
     class Instruction;
+    class LoadInst;
     class StoreInst;
     class Value;
 }
@@ -17,11 +19,11 @@ class Instrumenter
 public:
     void instrumentMain(llvm::Module* module);
     void instrumentStore(llvm::Module* module, llvm::StoreInst* store);
+    void instrumentLoad(llvm::Module* module, llvm::LoadInst* load);
     void instrumentBranch(llvm::Module* module, llvm::BranchInst* branch);
 
 private:
-    llvm::Value* buildStoreExpression(llvm::Module* module, llvm::Value* value, llvm::Instruction* insertionPoint);
-    llvm::Value* buildConditionExpression(llvm::Module* module, llvm::BranchInst* branch);
+    llvm::Value* buildExpression(llvm::Module* module, llvm::Value* value, llvm::Instruction* insertionPoint);
 
-    FunctionBuilder functionBuilder;
+    Functions functionBuilder;
 };

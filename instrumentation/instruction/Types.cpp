@@ -23,15 +23,15 @@ Type* Types::boolType(Module* module)
     return Type::getInt1Ty(module->getContext());
 }
 
-Type* Types::voidPtr(Module* module)
+PointerType* Types::voidPtr(Module* module)
 {
     return Types::int8Ptr(module);
 }
-Type* Types::int8Ptr(Module* module)
+PointerType* Types::int8Ptr(Module* module)
 {
     return Types::int8(module)->getPointerTo();
 }
-Type* Types::int64Ptr(Module* module)
+PointerType* Types::int64Ptr(Module* module)
 {
     return Types::int64(module)->getPointerTo();
 }
