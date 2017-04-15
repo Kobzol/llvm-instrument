@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../../common/socket.h"
-#include "../memory/HeapManager.h"
+#include "../memory/MemoryManager.h"
 #include "../symbolic/SymManager.h"
 
 class RuntimeContext
@@ -16,7 +16,7 @@ public:
 
     void setMmapArea(void* address, size_t size);
 
-    HeapManager* getHeapManager() const;
+    MemoryManager* getMemoryManager() const;
     SymManager* getSymManager() const;
 
     bool ownsMemory(void* address);
@@ -25,6 +25,6 @@ private:
     bool instrumentActive = false;
     Socket client;
 
-    HeapManager* heapManager;
+    MemoryManager* heapManager;
     SymManager* symManager;
 };

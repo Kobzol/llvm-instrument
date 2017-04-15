@@ -27,7 +27,11 @@ void Context::handleModule(Module* module)
 
 void Context::instrument(Module* module, Instruction* instruction)
 {
-    if (auto* store = dyn_cast<StoreInst>(instruction))
+    if (auto* alloca = dyn_cast<AllocaInst>(instruction))
+    {
+        this->instrumenter.instrumentAlloca(module, alloca);
+    }
+    else if (auto* store = dyn_cast<StoreInst>(instruction))
     {
         this->instrumenter.instrumentStore(module, store);
     }

@@ -2,14 +2,14 @@
 
 #include <cstddef>
 
-class HeapBlock
+class MemoryBlock
 {
 public:
-    HeapBlock()
+    MemoryBlock()
     {
 
     }
-    HeapBlock(void* address, size_t size) : address(address), size(size), active(true)
+    MemoryBlock(void* address, size_t size) : address(address), size(size), active(true)
     {
 
     }

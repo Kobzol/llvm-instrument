@@ -19,7 +19,7 @@ ${CLANG_PATH}/bin/clang++ -std=c++14 -emit-llvm ${FLAGS} -o ${BUILD_DIR}/${SRC_B
 echo "Bitcode generated"
 
 # run SE pass
-${CLANG_PATH}/bin/opt -S -load ${BUILD_DIR}/libllvmSE.so -se ${BUILD_DIR}/${SRC_BITCODE_FILE} -o ${BUILD_DIR}/${PASS_LL_FILE} || exit 1
+${CLANG_PATH}/bin/opt -S -load ${BUILD_DIR}/libllvmSE.so -mergereturn -se ${BUILD_DIR}/${SRC_BITCODE_FILE} -o ${BUILD_DIR}/${PASS_LL_FILE} || exit 1
 echo "Bitcode transformed"
 
 # compile to assembly

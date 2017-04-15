@@ -1,12 +1,12 @@
 #pragma once
 
 #include <unordered_map>
-#include "../memory/HeapBlock.h"
+#include "../memory/MemoryBlock.h"
 #include "Constraint.h"
 #include "../../common/CmpType.h"
 #include "../path/PathCondition.h"
 #include "ICmp.h"
-#include "../memory/HeapManager.h"
+#include "../memory/MemoryManager.h"
 
 class SymManager
 {
@@ -23,7 +23,7 @@ public:
     void store(void* address, size_t size, Constraint* constraint);
     void branch(ICmp* condition, bool concreteCondition, void* trueLabel, void* falseLabel);
 
-    void checkGEP(HeapManager* heapManager, void* address, Constraint* indexer);
+    void checkGEP(MemoryManager* heapManager, void* address, Constraint* indexer);
 
 private:
     Constraint* getConstraint(void* mem);

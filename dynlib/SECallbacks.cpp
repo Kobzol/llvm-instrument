@@ -79,5 +79,14 @@ PUBLIC void CALLBACK(checkGEP)(void* address, void* index)
     IBlock block(runtimeContext);
 
     Constraint* indexer = static_cast<Constraint*>(index);
-    runtimeContext->getSymManager()->checkGEP(runtimeContext->getHeapManager(), address, indexer);
+    runtimeContext->getSymManager()->checkGEP(runtimeContext->getMemoryManager(), address, indexer);
+}
+
+PUBLIC void CALLBACK(stackAlloc)(void* address, size_t size)
+{
+    runtimeContext->getMemoryManager()->handleStackAlloc(address, size);
+}
+PUBLIC void CALLBACK(stackDealloc)(void* address)
+{
+    runtimeContext->getMemoryManager()->handleStackDealloc(address);
 }

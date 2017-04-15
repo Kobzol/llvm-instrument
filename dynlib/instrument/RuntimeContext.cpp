@@ -18,7 +18,7 @@ void RuntimeContext::stopInstrumentation()
 
 void RuntimeContext::init()
 {
-    this->heapManager = new (mmapAllocator.alloc(sizeof(HeapManager))) HeapManager();
+    this->heapManager = new (mmapAllocator.alloc(sizeof(MemoryManager))) MemoryManager();
     this->symManager = new (mmapAllocator.alloc(sizeof(SymManager))) SymManager();
 }
 
@@ -33,7 +33,7 @@ void RuntimeContext::setMmapArea(void* address, size_t size)
     this->client.writeline("set-mmap-area " + std::to_string((size_t) address) + " " + std::to_string(size));
 }
 
-HeapManager* RuntimeContext::getHeapManager() const
+MemoryManager* RuntimeContext::getMemoryManager() const
 {
     return this->heapManager;
 }

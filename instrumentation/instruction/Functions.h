@@ -24,6 +24,9 @@ public:
 
     llvm::Function* checkGEP(llvm::Module* module);
 
+    llvm::Function* stackAlloc(llvm::Module* module);
+    llvm::Function* stackDealloc(llvm::Module* module);
+
 private:
     std::string getName(std::string functionName);
 };

@@ -192,7 +192,7 @@ target_link_libraries(llvmSE ${Z3_LIB})
 add_library(llvmSEDyn SHARED
         dynlib/MallocCallbacks.cpp
         dynlib/symbolic/SymManager.cpp
-        dynlib/memory/HeapBlock.cpp
+        dynlib/memory/MemoryBlock.cpp
         common/socket.cpp
         common/help_printer.cpp
         dynlib/memory/LinkerManager.cpp
@@ -201,7 +201,7 @@ add_library(llvmSEDyn SHARED
         dynlib/memory/MmapAllocator.cpp
         dynlib/util/Logger.cpp
         dynlib/instrument/InstrumentBlock.cpp
-        dynlib/memory/HeapManager.cpp
+        dynlib/memory/MemoryManager.cpp
         dynlib/SECallbacks.cpp
         dynlib/Common.cpp
         dynlib/symbolic/Constraint.cpp

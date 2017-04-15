@@ -22,6 +22,8 @@ public:
     void instrumentLoad(llvm::Module* module, llvm::LoadInst* load);
     void instrumentBranch(llvm::Module* module, llvm::BranchInst* branch);
 
+    void instrumentAlloca(llvm::Module* module, llvm::AllocaInst* alloca);
+
 private:
     llvm::Value* buildExpression(llvm::Module* module, llvm::Value* value, llvm::Instruction* insertionPoint);
 

@@ -69,11 +69,11 @@ void SymManager::branch(ICmp* condition, bool concreteCondition, void* trueLabel
     this->pathCondition.addCondition(expr);
 }
 
-void SymManager::checkGEP(HeapManager* heapManager, void* address, Constraint* indexer)
+void SymManager::checkGEP(MemoryManager* heapManager, void* address, Constraint* indexer)
 {
     Logger::log("Checking GEP (buffer at %p)\n", address);
 
-    const HeapBlock* block = heapManager->getBlock(address);
+    const MemoryBlock* block = heapManager->getBlock(address);
     if (block != nullptr)
     {
         Logger::log("GEP block found, block size %lu\n", block->getSize());

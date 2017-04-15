@@ -46,7 +46,7 @@ PUBLIC void* malloc(size_t size)
     if (runtimeInitialized)
     {
         IBlock block(runtimeContext);
-        runtimeContext->getHeapManager()->handleMalloc(addr, size);
+        runtimeContext->getMemoryManager()->handleMalloc(addr, size);
     }
 #endif
     return addr;
@@ -80,7 +80,7 @@ PUBLIC void* calloc(size_t count, size_t size)
     if (runtimeInitialized)
     {
         IBlock block(runtimeContext);
-        runtimeContext->getHeapManager()->handleMalloc(addr, count * size);
+        runtimeContext->getMemoryManager()->handleMalloc(addr, count * size);
     }
 #endif
     return addr;
@@ -114,7 +114,7 @@ PUBLIC void* realloc(void* addr, size_t size)
     if (runtimeInitialized)
     {
         IBlock block(runtimeContext);
-        runtimeContext->getHeapManager()->handleRealloc(addr, newAddr, size);
+        runtimeContext->getMemoryManager()->handleRealloc(addr, newAddr, size);
     }
 #endif
     return newAddr;
@@ -153,7 +153,7 @@ PUBLIC void free(void* addr)
     if (runtimeInitialized)
     {
         IBlock block(runtimeContext);
-        runtimeContext->getHeapManager()->handleFree(addr);
+        runtimeContext->getMemoryManager()->handleFree(addr);
     }
 #endif
 }

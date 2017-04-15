@@ -86,6 +86,23 @@ Function* Functions::checkGEP(Module* module)
                                                       nullptr));
 }
 
+llvm::Function* Functions::stackAlloc(llvm::Module* module)
+{
+    return cast<Function>(module->getOrInsertFunction(this->getName("stackAlloc"),
+                                                      Types::voidType(module),
+                                                      Types::voidPtr(module),
+                                                      Types::int64(module),
+                                                      nullptr));
+}
+
+llvm::Function* Functions::stackDealloc(llvm::Module* module)
+{
+    return cast<Function>(module->getOrInsertFunction(this->getName("stackDealloc"),
+                                                      Types::voidType(module),
+                                                      Types::voidPtr(module),
+                                                      nullptr));
+}
+
 std::string Functions::getName(std::string functionName)
 {
     return prefix + functionName;
