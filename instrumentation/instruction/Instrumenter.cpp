@@ -4,8 +4,6 @@
 #include <llvm/IR/Module.h>
 #include <llvm/IR/Instructions.h>
 #include <llvm/IR/IRBuilder.h>
-#include <llvm/Support/Debug.h>
-#include <iostream>
 #include "../util/Demangler.h"
 #include "ExprBuilder.h"
 #include "Types.h"
@@ -39,6 +37,11 @@ void Instrumenter::instrumentStore(Module* module, StoreInst* store)
     Value* dst = store->getPointerOperand();
     Value* src = store->getValueOperand();
 
+    if (auto* gep = dyn_cast<GetElementPtrInst>(dst))
+    {
+        this->checkGEP(module, gep);
+    }
+
     builder.CreateCall(this->functionBuilder.store(module), {
             builder.CreatePointerCast(dst, Types::int8Ptr(module)),
             Values::int64(module, dst->getType()->getPointerElementType()->getPrimitiveSizeInBits()),
@@ -52,16 +55,24 @@ void Instrumenter::instrumentLoad(Module* module, LoadInst* load)
     Value* src = load->getPointerOperand();
     if (auto* gep = dyn_cast<GetElementPtrInst>(src))
     {
-        Value* buffer = gep->getPointerOperand();
-        Value* operand = gep->getOperand(gep->getNumOperands() - 1);
-
-        Value* indexExpression = this->buildExpression(module, operand, load);
-        builder.CreateCall(this->functionBuilder.checkGEP(module), {
-                builder.CreatePointerCast(buffer, Types::int8Ptr(module)),
-                indexExpression
-        });
+        this->checkGEP(module, gep);
     }
 }
+
+void Instrumenter::checkGEP(Module* module, GetElementPtrInst* gep)
+{
+    IRBuilder<> builder(gep);
+
+    Value* buffer = gep->getPointerOperand();
+    Value* operand = gep->getOperand(gep->getNumOperands() - 1);
+
+    Value* indexExpression = this->buildExpression(module, operand, gep);
+    builder.CreateCall(functionBuilder.checkGEP(module), {
+            builder.CreatePointerCast(buffer, Types::int8Ptr(module)),
+            indexExpression
+    });
+}
+
 void Instrumenter::instrumentBranch(Module* module, BranchInst* branch)
 {
     if (branch->isConditional())
@@ -105,12 +116,6 @@ void Instrumenter::instrumentAlloca(Module* module, AllocaInst* alloca)
     }
 }
 
-Value* Instrumenter::buildExpression(Module* module, Value* value, Instruction* insertionPoint)
-{
-    ExprBuilder builder(insertionPoint);
-    return builder.buildExpression(module, value);
-}
-
 void Instrumenter::instrumentGlobals(Module* module, CallInst* initCall)
 {
     IRBuilder<> builder(initCall->getNextNode());
@@ -127,4 +132,10 @@ void Instrumenter::instrumentGlobals(Module* module, CallInst* initCall)
             });
         }
     }
+}
+
+Value* Instrumenter::buildExpression(Module* module, Value* value, Instruction* insertionPoint)
+{
+    ExprBuilder builder(insertionPoint);
+    return builder.buildExpression(module, value);
 }

@@ -1,15 +1,17 @@
 #pragma once
 
 #include <cstddef>
-#include <llvm/IR/Instructions.h>
 
 #include "Functions.h"
 
 namespace llvm {
+    class AllocaInst;
     class BranchInst;
-    class Module;
+    class CallInst;
+    class GetElementPtrInst;
     class Instruction;
     class LoadInst;
+    class Module;
     class StoreInst;
     class Value;
 }
@@ -31,4 +33,6 @@ private:
     Functions functionBuilder;
 
     void instrumentGlobals(llvm::Module* module, llvm::CallInst* initCall);
+
+    void checkGEP(llvm::Module* module, llvm::GetElementPtrInst* gep);
 };
