@@ -5,11 +5,19 @@
 class MemoryBlock
 {
 public:
+    enum class MemoryRegion: unsigned int
+    {
+        Stack = 0,
+        Heap,
+        Data
+    };
+
     MemoryBlock()
     {
 
     }
-    MemoryBlock(void* address, size_t size) : address(address), size(size), active(true)
+    MemoryBlock(void* address, size_t size, MemoryRegion region)
+            : address(address), size(size), active(true), region(region)
     {
 
     }
@@ -31,9 +39,14 @@ public:
     {
         return this->size;
     }
+    MemoryRegion getRegion() const
+    {
+        return this->region;
+    }
 
 private:
     void* address;
     size_t size;
     bool active;
+    MemoryRegion region;
 };

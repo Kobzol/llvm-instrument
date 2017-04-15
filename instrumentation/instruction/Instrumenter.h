@@ -26,6 +26,9 @@ public:
 
 private:
     llvm::Value* buildExpression(llvm::Module* module, llvm::Value* value, llvm::Instruction* insertionPoint);
+    llvm::Function* getMainFunction(llvm::Module* module) const;
 
     Functions functionBuilder;
+
+    void instrumentGlobals(llvm::Module* module, llvm::CallInst* initCall);
 };

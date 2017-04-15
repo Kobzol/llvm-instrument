@@ -86,7 +86,7 @@ Function* Functions::checkGEP(Module* module)
                                                       nullptr));
 }
 
-llvm::Function* Functions::stackAlloc(llvm::Module* module)
+Function* Functions::stackAlloc(Module* module)
 {
     return cast<Function>(module->getOrInsertFunction(this->getName("stackAlloc"),
                                                       Types::voidType(module),
@@ -95,11 +95,20 @@ llvm::Function* Functions::stackAlloc(llvm::Module* module)
                                                       nullptr));
 }
 
-llvm::Function* Functions::stackDealloc(llvm::Module* module)
+Function* Functions::stackDealloc(Module* module)
 {
     return cast<Function>(module->getOrInsertFunction(this->getName("stackDealloc"),
                                                       Types::voidType(module),
                                                       Types::voidPtr(module),
+                                                      nullptr));
+}
+
+Function* Functions::globalVariable(Module* module)
+{
+    return cast<Function>(module->getOrInsertFunction(this->getName("globalVariable"),
+                                                      Types::voidType(module),
+                                                      Types::voidPtr(module),
+                                                      Types::int64(module),
                                                       nullptr));
 }
 

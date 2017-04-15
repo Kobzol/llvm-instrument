@@ -1,0 +1,3 @@
+Bit/byte size
+Check if expression is symbolic
+Specialize heap/stack/global GEP

@@ -16,15 +16,22 @@ using namespace llvm;
 
 void Instrumenter::instrumentMain(Module* module)
 {
-    Function* main = Demangler::get().getFunctionByDemangledName(module, "main");
+    Function* main = this->getMainFunction(module);
     assert(main);
 
     BasicBlock& bb = main->getEntryBlock();
     Instruction* instruction = bb.getFirstNonPHI();
 
     IRBuilder<> builder(instruction);
-    builder.CreateCall(this->functionBuilder.init(module));
+    CallInst* initCall = builder.CreateCall(this->functionBuilder.init(module));
+    this->instrumentGlobals(module, initCall);
 }
+
+Function* Instrumenter::getMainFunction(Module* module) const
+{
+    return Demangler::get().getFunctionByDemangledName(module, "main");
+}
+
 void Instrumenter::instrumentStore(Module* module, StoreInst* store)
 {
     IRBuilder<> builder(store);
@@ -85,7 +92,7 @@ void Instrumenter::instrumentAlloca(Module* module, AllocaInst* alloca)
             Value* arrayAddress = builder.CreatePointerCast(alloca, Types::int8Ptr(module));
             builder.CreateCall(this->functionBuilder.stackAlloc(module), {
                     arrayAddress,
-                    Values::int64(module, module->getDataLayout().getTypeAllocSize(alloca->getAllocatedType()))
+                    Values::int64(module, module->getDataLayout().getTypeAllocSize(type))
             });
 
             Function* fn = alloca->getFunction();
@@ -102,4 +109,22 @@ Value* Instrumenter::buildExpression(Module* module, Value* value, Instruction* 
 {
     ExprBuilder builder(insertionPoint);
     return builder.buildExpression(module, value);
+}
+
+void Instrumenter::instrumentGlobals(Module* module, CallInst* initCall)
+{
+    IRBuilder<> builder(initCall->getNextNode());
+
+    for (auto& global : module->getGlobalList())
+    {
+        Type* type = global.getType()->getContainedType(0);
+        if (isa<ArrayType>(type))
+        {
+            Value* arrayAddress = builder.CreatePointerCast(&global, Types::int8Ptr(module));
+            builder.CreateCall(this->functionBuilder.globalVariable(module), {
+                    arrayAddress,
+                    Values::int64(module, module->getDataLayout().getTypeAllocSize(type))
+            });
+        }
+    }
 }

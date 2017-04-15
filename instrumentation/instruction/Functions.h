@@ -27,6 +27,8 @@ public:
     llvm::Function* stackAlloc(llvm::Module* module);
     llvm::Function* stackDealloc(llvm::Module* module);
 
+    llvm::Function* globalVariable(llvm::Module* module);
+
 private:
     std::string getName(std::string functionName);
 };

@@ -90,3 +90,7 @@ PUBLIC void CALLBACK(stackDealloc)(void* address)
 {
     runtimeContext->getMemoryManager()->handleStackDealloc(address);
 }
+PUBLIC void CALLBACK(globalVariable)(void* address, size_t size)
+{
+    runtimeContext->getMemoryManager()->handleGlobalVariable(address, size);
+}

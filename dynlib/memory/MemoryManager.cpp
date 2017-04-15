@@ -3,7 +3,7 @@
 
 void MemoryManager::handleMalloc(void* address, size_t size)
 {
-    this->insertBlock(this->heapMap, address, size);
+    this->insertBlock(address, size, MemoryBlock::MemoryRegion::Heap);
 }
 void MemoryManager::handleRealloc(void* oldAddress, void* newAddress, size_t size)
 {
@@ -12,8 +12,8 @@ void MemoryManager::handleRealloc(void* oldAddress, void* newAddress, size_t siz
 }
 void MemoryManager::handleFree(void* address)
 {
-    auto it = this->heapMap.find(this->hashAddress(address));
-    if (it != this->heapMap.end())
+    auto it = this->memoryMap.find(this->hashAddress(address));
+    if (it != this->memoryMap.end())
     {
         it->second.free();
     }
@@ -21,17 +21,8 @@ void MemoryManager::handleFree(void* address)
 
 MemoryBlock* MemoryManager::getBlock(void* address)
 {
-    MemoryBlock* heapBlock = this->getBlock(address, this->heapMap);
-    if (!heapBlock)
-    {
-        return this->getBlock(address, this->stackMap);
-    }
-    else return heapBlock;
-}
-MemoryBlock* MemoryManager::getBlock(void* address, MemoryMap& memoryMap)
-{
-    auto it = memoryMap.find(this->hashAddress(address));
-    if (it == memoryMap.end())
+    auto it = this->memoryMap.find(this->hashAddress(address));
+    if (it == this->memoryMap.end())
     {
         return nullptr;
     }
@@ -46,16 +37,21 @@ size_t MemoryManager::hashAddress(void* address) const
 
 void MemoryManager::handleStackAlloc(void* address, size_t size)
 {
-    this->insertBlock(this->stackMap, address, size);
+    this->insertBlock(address, size, MemoryBlock::MemoryRegion::Stack);
 }
 
-void MemoryManager::insertBlock(MemoryMap& memoryMap, void* address, size_t size)
+void MemoryManager::insertBlock(void* address, size_t size, MemoryBlock::MemoryRegion region)
 {
     size_t hash = hashAddress(address);
-    memoryMap[hash] = MemoryBlock(address, size);
+    memoryMap[hash] = MemoryBlock(address, size, region);
 }
 
 void MemoryManager::handleStackDealloc(void* address)
 {
-    this->stackMap.erase(this->hashAddress(address));
+    this->memoryMap.erase(this->hashAddress(address));
+}
+
+void MemoryManager::handleGlobalVariable(void* address, size_t size)
+{
+    this->insertBlock(address, size, MemoryBlock::MemoryRegion::Data);
 }

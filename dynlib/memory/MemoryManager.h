@@ -17,15 +17,14 @@ public:
     MemoryBlock* getBlock(void* address);
 
     void handleStackAlloc(void* address, size_t size);
-
     void handleStackDealloc(void* address);
+
+    void handleGlobalVariable(void* address, size_t size);
 
 private:
     size_t hashAddress(void* address) const;
 
-    void insertBlock(MemoryMap& memoryMap, void* address, size_t size);
-    MemoryBlock* getBlock(void* address, MemoryMap& memoryMap);
+    void insertBlock(void* address, size_t size, MemoryBlock::MemoryRegion region);
 
-    MemoryMap heapMap;
-    MemoryMap stackMap;
+    MemoryMap memoryMap;
 };
