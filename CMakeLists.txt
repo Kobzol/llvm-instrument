@@ -4,8 +4,10 @@ project(clang_test)
 set(CMAKE_VERBOSE_MAKEFILE ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
 
+set(INPUT_FILE "../input/test.cpp")
+
 set(CLANG_DIR "/home/kobzol/libraries/llvm4.0-binaries")
-set(Z3_DIR "/home/kobzol/libraries/z3-4.5.0/build/build")
+#set(Z3_DIR "/home/kobzol/libraries/z3-4.5.0/build/build")
 
 set(CMAKE_CXX_COMPILER "${CLANG_DIR}/bin/clang++")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -std=c++14 -Wsign-compare -Wall -fno-rtti -pedantic -D__STDC_CONSTANT_MACROS -D__STDC_LIMIT_MACROS ${LLVM_LIBS}")
@@ -186,6 +188,7 @@ add_library(instrumentation
 add_library(llvmSE SHARED instrumentation/RegisterPass.cpp)
 target_link_libraries(llvmSE instrumentation)
 target_link_libraries(llvmSE ${Z3_LIB})
+add_dependencies(llvmSE inputLlvm)
 
 
 # Dynamic library
@@ -216,15 +219,6 @@ target_link_libraries(llvmSEDyn dl)
 target_link_libraries(llvmSEDyn ${Z3_LIB})
 
 
-# Interpret
-add_executable(llvmInterpret
-        interpret/Interpret.cpp
-        interpret/main.cpp interpret/Execution.cpp
-        interpret/ExternalFunctions.cpp)
-target_link_libraries(llvmInterpret ffi)
-target_link_libraries(llvmInterpret ${CLANG_LIB})
-
-
 # Rewinder
 add_executable(rewinder
         rewinder/rewinder.cpp
@@ -234,21 +228,11 @@ add_executable(rewinder
         rewinder/StateManager.cpp
         rewinder/State.cpp)
 target_link_libraries(rewinder dl)
-add_dependencies(rewinder input)
 
 
-# Direct run
-set (RUN_SOURCE_FILES
-        instrumentation/DirectRun.cpp)
-add_executable(direct ${RUN_SOURCE_FILES})
+add_executable(direct instrumentation/DirectRun.cpp)
 target_link_libraries(direct instrumentation)
 target_link_libraries(direct ${CLANG_LIB})
-target_link_libraries(direct ${Z3_LIB})
 
-
-# Test input
-add_executable(input
-        input/test.cpp
-        common/socket.cpp
-        common/help_printer.cpp)
-target_link_libraries(input llvmSEDyn)
+# Emit bitcode for input
+add_custom_target(inputLlvm ${CMAKE_CXX_COMPILER} -O0 -c -emit-llvm -std=c++14 -o test.bc ${INPUT_FILE})

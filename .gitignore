@@ -10,6 +10,8 @@ cmake-build-release
 input
 
 useful_passes.txt
+todo.txt
+find.sh
 
 
 # Created by https://www.gitignore.io/api/clion,intellij+iml,c++

@@ -70,7 +70,7 @@ Function* Functions::exprICmp(Module* module)
 Function* Functions::branch(Module* module)
 {
     return cast<Function>(module->getOrInsertFunction(this->getName("branch"),
-                                                      Types::voidType(module),
+                                                      Types::boolType(module),
                                                       Types::voidPtr(module),
                                                       Types::boolType(module),
                                                       Types::voidPtr(module),

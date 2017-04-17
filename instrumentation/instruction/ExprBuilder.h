@@ -1,18 +1,20 @@
 #pragma once
 
-#include <llvm/IR/Constant.h>
-#include <llvm/IR/InstrTypes.h>
-#include <llvm/IR/Instructions.h>
 #include "Functions.h"
 
 class Instrumenter;
 
 namespace llvm {
+    class Argument;
     class BinaryOperator;
+    class CallInst;
+    class CastInst;
+    class Constant;
+    class ICmpInst;
+    class Instruction;
+    class LoadInst;
     class Module;
     class Value;
-    class Function;
-    class CallInst;
 }
 
 class ExprBuilder
@@ -26,9 +28,11 @@ private:
     llvm::Value* buildConstant(llvm::Module* module, llvm::Constant* constant);
     llvm::Value* buildBinOp(llvm::Module* module, llvm::BinaryOperator* oper);
     llvm::Value* buildLoad(llvm::Module* module, llvm::LoadInst* load);
+    llvm::Value* buildLoad(llvm::Module* module, llvm::Value* value, size_t size);
     llvm::Value* buildIntegerCmp(llvm::Module* module, llvm::ICmpInst* instruction);
     llvm::Value* buildCall(llvm::Module* module, llvm::CallInst* call);
     llvm::Value* buildCast(llvm::Module* module, llvm::CastInst* cast);
+    llvm::Value* buildArgument(llvm::Module* module, llvm::Argument* argument);
 
     llvm::Instruction* insertionPoint;
     Functions functionBuilder;

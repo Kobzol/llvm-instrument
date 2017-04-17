@@ -9,6 +9,7 @@
 #include <llvm/IR/IRBuilder.h>
 
 #include "../../common/CmpType.h"
+#include "../../dynlib/util/Logger.h"
 
 using namespace llvm;
 
@@ -60,9 +61,14 @@ Value* ExprBuilder::buildExpression(Module* module, Value* value)
     {
         return this->buildCast(module, cast);
     }
+    else if (auto* arg = dyn_cast<Argument>(value))
+    {
+        return this->buildArgument(module, arg);
+    }
 
+    std::cerr << "Unknown expression: " << std::endl;
     value->dump();
-    exit(0);
+    exit(1);
     assert(false);
     return nullptr;
 }
@@ -99,12 +105,17 @@ Value* ExprBuilder::buildBinOp(Module* module, BinaryOperator* oper)
 
 Value* ExprBuilder::buildLoad(Module* module, LoadInst* load)
 {
-    Function* loadFn = this->functionBuilder.exprLoad(module);
+    Value* src = load->getPointerOperand();
+    return this->buildLoad(module, src, src->getType()->getPrimitiveSizeInBits());
+}
 
+Value* ExprBuilder::buildLoad(Module* module, Value* value, size_t size)
+{
+    Function* loadFn = this->functionBuilder.exprLoad(module);
     IRBuilder<> builder(this->insertionPoint);
     return builder.CreateCall(loadFn, {
-            builder.CreateBitOrPointerCast(load->getPointerOperand(), Types::voidPtr(module)),
-            Values::int64(module, load->getPointerOperand()->getType()->getPrimitiveSizeInBits()) // TODO: 0 size
+            builder.CreateBitOrPointerCast(value, Types::voidPtr(module)),
+            Values::int64(module, size) // TODO: 0 size
     });
 }
 
@@ -131,4 +142,9 @@ Value* ExprBuilder::buildCall(llvm::Module* module, llvm::CallInst* call)
 Value* ExprBuilder::buildCast(llvm::Module* module, llvm::CastInst* cast)
 {
     return this->buildExpression(module, cast->getOperand(0));
+}
+
+Value* ExprBuilder::buildArgument(Module* module, Argument* argument)
+{
+    return this->buildLoad(module, argument, argument->getType()->getPrimitiveSizeInBits());
 }

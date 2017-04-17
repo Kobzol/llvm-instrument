@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 
 CLANG_PATH=$1
-BUILD_DIR="cmake-build-debug"
+BUILD_DIR="./cmake-build-debug"
+INPUT_DIR="./input"
 SRC_BITCODE_FILE=test.bc
 PASS_LL_FILE=test-opt.llvm
 ASSEMBLY_FILE=test.s
@@ -10,12 +11,12 @@ DYNAMIC_LIBRARY=llvmSEDyn
 REWINDER=rewinder
 FLAGS="-O0"
 
-pushd ./${BUILD_DIR}
+pushd ${BUILD_DIR}
     make -j4 --silent || exit 1
 popd
 
 # generate LLVM IR
-${CLANG_PATH}/bin/clang++ -std=c++14 -emit-llvm ${FLAGS} -o ${BUILD_DIR}/${SRC_BITCODE_FILE} -c input/test.cpp || exit 1
+${CLANG_PATH}/bin/clang++ -std=c++14 -emit-llvm ${FLAGS} -o ${BUILD_DIR}/${SRC_BITCODE_FILE} -c ${INPUT_DIR}/test.cpp || exit 1
 echo "Bitcode generated"
 
 # run SE pass

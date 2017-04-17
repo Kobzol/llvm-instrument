@@ -64,14 +64,17 @@ PUBLIC void* CALLBACK(expr_icmp)(void* op1, void* op2, size_t type)
             static_cast<Constraint*>(op1), static_cast<Constraint*>(op2), static_cast<CmpType>(type));
 }
 
-PUBLIC void CALLBACK(branch)(void* condition, bool concreteCondition, void* trueLabel, void* falseLabel)
+PUBLIC bool CALLBACK(branch)(void* condition, bool concreteCondition, void* trueLabel, void* falseLabel)
 {
     IBlock block(runtimeContext);
 
-    if (condition == nullptr) return;
+    if (condition != nullptr)
+    {
+        ICmp* cond = static_cast<ICmp*>(condition);
+        runtimeContext->getSymManager()->branch(cond, concreteCondition, trueLabel, falseLabel);
+    }
 
-    ICmp* cond = static_cast<ICmp*>(condition);
-    runtimeContext->getSymManager()->branch(cond, concreteCondition, trueLabel, falseLabel);
+    return concreteCondition;
 }
 
 PUBLIC void CALLBACK(checkGEP)(void* address, void* index)

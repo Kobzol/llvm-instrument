@@ -81,12 +81,14 @@ void Instrumenter::instrumentBranch(Module* module, BranchInst* branch)
         BasicBlock* invalidLabel = branch->getSuccessor(1);
 
         IRBuilder<> builder(branch);
-        builder.CreateCall(this->functionBuilder.branch(module), {
+        Value* branchCall = builder.CreateCall(this->functionBuilder.branch(module), {
                 this->buildExpression(module, branch->getCondition(), branch),
                 branch->getCondition(),
                 BlockAddress::get(branch->getFunction(), validLabel),
                 BlockAddress::get(branch->getFunction(), invalidLabel)
         });
+
+        branch->setCondition(branchCall);
     }
 }
 
