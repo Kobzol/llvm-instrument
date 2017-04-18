@@ -3,6 +3,7 @@
 #include "../../common/socket.h"
 #include "../memory/MemoryManager.h"
 #include "../symbolic/SymManager.h"
+#include "../function/FrameManager.h"
 
 class RuntimeContext
 {
@@ -18,8 +19,7 @@ public:
 
     MemoryManager* getMemoryManager() const;
     SymManager* getSymManager() const;
-
-    bool ownsMemory(void* address);
+    FrameManager* getFrameManager() const;
 
 private:
     bool instrumentActive = false;
@@ -27,4 +27,5 @@ private:
 
     MemoryManager* heapManager;
     SymManager* symManager;
+    FrameManager* frameManager;
 };

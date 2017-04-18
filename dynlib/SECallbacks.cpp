@@ -87,13 +87,31 @@ PUBLIC void CALLBACK(checkGEP)(void* address, void* index)
 
 PUBLIC void CALLBACK(stackAlloc)(void* address, size_t size)
 {
+    IBlock block(runtimeContext);
     runtimeContext->getMemoryManager()->handleStackAlloc(address, size);
 }
 PUBLIC void CALLBACK(stackDealloc)(void* address)
 {
+    IBlock block(runtimeContext);
     runtimeContext->getMemoryManager()->handleStackDealloc(address);
 }
 PUBLIC void CALLBACK(globalVariable)(void* address, size_t size)
 {
+    IBlock block(runtimeContext);
     runtimeContext->getMemoryManager()->handleGlobalVariable(address, size);
+}
+
+PUBLIC void CALLBACK(setReturnValue)(void* returnValue)
+{
+    IBlock block(runtimeContext);
+    if (returnValue != nullptr)
+    {
+        ((Constraint*)returnValue)->dump();
+    }
+    runtimeContext->getFrameManager()->setReturn(static_cast<Constraint*>(returnValue));
+}
+PUBLIC void* CALLBACK(getReturnValue)()
+{
+    IBlock block(runtimeContext);
+    return runtimeContext->getFrameManager()->getReturnValue();
 }

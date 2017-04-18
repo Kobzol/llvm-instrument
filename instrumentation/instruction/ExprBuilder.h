@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Functions.h"
+#include "../track/CallMap.h"
 
 class Instrumenter;
 
@@ -20,7 +21,7 @@ namespace llvm {
 class ExprBuilder
 {
 public:
-    ExprBuilder(llvm::Instruction* insertionPoint);
+    ExprBuilder(llvm::Instruction* insertionPoint, CallMap* callMap);
 
     llvm::Value* buildExpression(llvm::Module* module, llvm::Value* value);
 
@@ -34,6 +35,7 @@ private:
     llvm::Value* buildCast(llvm::Module* module, llvm::CastInst* cast);
     llvm::Value* buildArgument(llvm::Module* module, llvm::Argument* argument);
 
+    CallMap* callMap;
     llvm::Instruction* insertionPoint;
     Functions functionBuilder;
 };

@@ -20,6 +20,7 @@ void RuntimeContext::init()
 {
     this->heapManager = new (mmapAllocator.alloc(sizeof(MemoryManager))) MemoryManager();
     this->symManager = new (mmapAllocator.alloc(sizeof(SymManager))) SymManager();
+    this->frameManager = new (mmapAllocator.alloc(sizeof(FrameManager))) FrameManager();
 }
 
 void RuntimeContext::connect(const char* host, unsigned short port)
@@ -37,8 +38,11 @@ MemoryManager* RuntimeContext::getMemoryManager() const
 {
     return this->heapManager;
 }
-
 SymManager* RuntimeContext::getSymManager() const
 {
     return this->symManager;
+}
+FrameManager* RuntimeContext::getFrameManager() const
+{
+    return this->frameManager;
 }

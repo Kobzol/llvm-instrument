@@ -182,7 +182,7 @@ add_library(instrumentation
         instrumentation/instruction/Functions.cpp
         instrumentation/instruction/Types.cpp
         instrumentation/instruction/Values.cpp
-        instrumentation/track/ValueRegistry.cpp)
+        instrumentation/track/ValueRegistry.cpp instrumentation/track/CallMap.cpp instrumentation/track/CallMap.h)
 
 # LLVM pass
 add_library(llvmSE SHARED instrumentation/RegisterPass.cpp)
@@ -214,7 +214,7 @@ add_library(llvmSEDyn SHARED
         dynlib/symbolic/SymbolicInt.cpp
         dynlib/symbolic/ICmp.cpp
         dynlib/path/PathCondition.cpp
-        dynlib/util/Formatter.cpp)
+        dynlib/util/Formatter.cpp dynlib/function/FrameManager.cpp dynlib/function/FrameManager.h dynlib/function/Frame.cpp dynlib/function/Frame.h)
 target_link_libraries(llvmSEDyn dl)
 target_link_libraries(llvmSEDyn ${Z3_LIB})
 

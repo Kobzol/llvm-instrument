@@ -29,6 +29,9 @@ public:
 
     llvm::Function* globalVariable(llvm::Module* module);
 
+    llvm::Function* getReturnValue(llvm::Module* module);
+    llvm::Function* setReturnValue(llvm::Module* module);
+
 private:
     std::string getName(std::string functionName);
 };

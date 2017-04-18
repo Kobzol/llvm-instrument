@@ -16,8 +16,9 @@ void Context::handleModule(Module* module)
             Instruction* inst = block.getFirstNonPHI();
             while (inst != nullptr)
             {
+                Instruction* next = inst->getNextNode();
                 this->instrument(module, inst);
-                inst = inst->getNextNode();
+                inst = next;
             }
         }
     }
@@ -27,20 +28,5 @@ void Context::handleModule(Module* module)
 
 void Context::instrument(Module* module, Instruction* instruction)
 {
-    if (auto* alloca = dyn_cast<AllocaInst>(instruction))
-    {
-        this->instrumenter.instrumentAlloca(module, alloca);
-    }
-    else if (auto* store = dyn_cast<StoreInst>(instruction))
-    {
-        this->instrumenter.instrumentStore(module, store);
-    }
-    else if (auto* load = dyn_cast<LoadInst>(instruction))
-    {
-        this->instrumenter.instrumentLoad(module, load);
-    }
-    else if (auto* br = dyn_cast<BranchInst>(instruction))
-    {
-        this->instrumenter.instrumentBranch(module, br);
-    }
+    this->instrumenter.instrument(module, instruction);
 }

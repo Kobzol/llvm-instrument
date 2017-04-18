@@ -30,7 +30,8 @@ static CmpType getICmpType(ICmpInst* icmp)
     return CmpType::Equal;
 }
 
-ExprBuilder::ExprBuilder(llvm::Instruction* insertionPoint): insertionPoint(insertionPoint)
+ExprBuilder::ExprBuilder(llvm::Instruction* insertionPoint, CallMap* callMap)
+        : insertionPoint(insertionPoint), callMap(callMap)
 {
 
 }
@@ -119,7 +120,7 @@ Value* ExprBuilder::buildLoad(Module* module, Value* value, size_t size)
     });
 }
 
-Value* ExprBuilder::buildIntegerCmp(llvm::Module* module, llvm::ICmpInst* instruction)
+Value* ExprBuilder::buildIntegerCmp(Module* module, ICmpInst* instruction)
 {
     Function* cmpFn = this->functionBuilder.exprICmp(module);
 
@@ -134,12 +135,17 @@ Value* ExprBuilder::buildIntegerCmp(llvm::Module* module, llvm::ICmpInst* instru
     });
 }
 
-Value* ExprBuilder::buildCall(llvm::Module* module, llvm::CallInst* call)
+Value* ExprBuilder::buildCall(Module* module, CallInst* call)
 {
-    return ConstantPointerNull::get(Types::int8Ptr(module));
+    Value* returnValue = this->callMap->getReturn(call);
+    if (returnValue != nullptr)
+    {
+        return returnValue;
+    }
+    else return ConstantPointerNull::get(Types::int8Ptr(module));
 }
 
-Value* ExprBuilder::buildCast(llvm::Module* module, llvm::CastInst* cast)
+Value* ExprBuilder::buildCast(Module* module, CastInst* cast)
 {
     return this->buildExpression(module, cast->getOperand(0));
 }

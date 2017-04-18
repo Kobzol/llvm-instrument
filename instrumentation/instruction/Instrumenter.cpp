@@ -12,6 +12,34 @@
 
 using namespace llvm;
 
+void Instrumenter::instrument(Module* module, Instruction* instruction)
+{
+    if (auto* alloca = dyn_cast<AllocaInst>(instruction))
+    {
+        this->instrumentAlloca(module, alloca);
+    }
+    else if (auto* store = dyn_cast<StoreInst>(instruction))
+    {
+        this->instrumentStore(module, store);
+    }
+    else if (auto* load = dyn_cast<LoadInst>(instruction))
+    {
+        this->instrumentLoad(module, load);
+    }
+    else if (auto* br = dyn_cast<BranchInst>(instruction))
+    {
+        this->instrumentBranch(module, br);
+    }
+    else if (auto* ret = dyn_cast<ReturnInst>(instruction))
+    {
+        this->instrumentReturn(module, ret);
+    }
+    else if (auto* call = dyn_cast<CallInst>(instruction))
+    {
+        this->instrumentCall(module, call);
+    }
+}
+
 void Instrumenter::instrumentMain(Module* module)
 {
     Function* main = this->getMainFunction(module);
@@ -138,6 +166,26 @@ void Instrumenter::instrumentGlobals(Module* module, CallInst* initCall)
 
 Value* Instrumenter::buildExpression(Module* module, Value* value, Instruction* insertionPoint)
 {
-    ExprBuilder builder(insertionPoint);
+    ExprBuilder builder(insertionPoint, &this->callMap);
     return builder.buildExpression(module, value);
+}
+
+void Instrumenter::instrumentReturn(Module* module, ReturnInst* ret)
+{
+    Value* retVal = ret->getReturnValue();
+    if (retVal != nullptr)
+    {
+        IRBuilder<> builder(ret);
+        builder.CreateCall(this->functionBuilder.setReturnValue(module), {
+                this->buildExpression(module, retVal, ret)
+        });
+    }
+}
+
+void Instrumenter::instrumentCall(Module* module, CallInst* call)
+{
+    Instruction* insertionPoint = call->getNextNode();
+    IRBuilder<> builder(insertionPoint);
+    Value* retValue = builder.CreateCall(this->functionBuilder.getReturnValue(module));
+    this->callMap.storeReturn(call, retValue);
 }

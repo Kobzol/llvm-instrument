@@ -112,6 +112,20 @@ Function* Functions::globalVariable(Module* module)
                                                       nullptr));
 }
 
+Function* Functions::getReturnValue(Module* module)
+{
+    return cast<Function>(module->getOrInsertFunction(this->getName("getReturnValue"),
+                                                      Types::voidPtr(module),
+                                                      nullptr));
+}
+Function* Functions::setReturnValue(Module* module)
+{
+    return cast<Function>(module->getOrInsertFunction(this->getName("setReturnValue"),
+                                                      Types::voidType(module),
+                                                      Types::voidPtr(module),
+                                                      nullptr));
+}
+
 std::string Functions::getName(std::string functionName)
 {
     return prefix + functionName;
