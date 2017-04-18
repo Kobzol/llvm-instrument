@@ -80,12 +80,12 @@ PUBLIC bool CALLBACK(branch)(void* condition, bool concreteCondition, void* true
     return concreteCondition;
 }
 
-PUBLIC void CALLBACK(checkGEP)(void* address, void* index)
+PUBLIC void CALLBACK(checkGEP)(void* address, void* index, const char* location)
 {
     IBlock block(runtimeContext);
 
     Constraint* indexer = static_cast<Constraint*>(index);
-    runtimeContext->getSymManager()->checkGEP(runtimeContext->getMemoryManager(), address, indexer);
+    runtimeContext->getSymManager()->checkGEP(runtimeContext->getMemoryManager(), address, indexer, location);
 }
 
 PUBLIC void CALLBACK(stackAlloc)(void* address, size_t size)
@@ -129,7 +129,7 @@ PUBLIC void CALLBACK(createFrame)(size_t argumentCount, ...)
     Logger::log("Creating frame with %lu arguments\n", argumentCount);
 
     std::vector<Constraint*> arguments(argumentCount);
-    for (int i = 0; i < argumentCount; i++)
+    for (size_t i = 0; i < argumentCount; i++)
     {
         Constraint* constraint = va_arg(ap, Constraint*);
         constraint->dump(1);

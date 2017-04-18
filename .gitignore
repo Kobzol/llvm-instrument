@@ -12,6 +12,7 @@ input
 useful_passes.txt
 todo.txt
 find.sh
+.z3-trace
 
 
 # Created by https://www.gitignore.io/api/clion,intellij+iml,c++

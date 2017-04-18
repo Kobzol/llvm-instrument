@@ -83,6 +83,7 @@ Function* Functions::checkGEP(Module* module)
                                                       Types::voidType(module),
                                                       Types::voidPtr(module),
                                                       Types::voidPtr(module),
+                                                      Types::int8Ptr(module),
                                                       nullptr));
 }
 

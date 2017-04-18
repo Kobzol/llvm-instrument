@@ -235,4 +235,4 @@ target_link_libraries(direct instrumentation)
 target_link_libraries(direct ${CLANG_LIB})
 
 # Emit bitcode for input
-add_custom_target(inputLlvm ${CMAKE_CXX_COMPILER} -O0 -c -emit-llvm -std=c++14 -o test.bc ${INPUT_FILE})
+add_custom_target(inputLlvm ${CMAKE_CXX_COMPILER} -g -O0 -c -emit-llvm -std=c++14 -o test.bc ${INPUT_FILE})

@@ -9,6 +9,7 @@
 #include "Types.h"
 #include "Values.h"
 #include "../util/Util.h"
+#include "../util/DebugUtil.h"
 
 using namespace llvm;
 
@@ -94,11 +95,23 @@ void Instrumenter::checkGEP(Module* module, GetElementPtrInst* gep)
     Value* buffer = gep->getPointerOperand();
     Value* operand = gep->getOperand(gep->getNumOperands() - 1);
 
+    Value* locationRuntime = getLocation(module, gep);
     Value* indexExpression = this->buildExpression(module, operand, gep);
     builder.CreateCall(functionBuilder.checkGEP(module), {
             builder.CreatePointerCast(buffer, Types::int8Ptr(module)),
-            indexExpression
+            indexExpression,
+            builder.CreatePointerCast(locationRuntime, Types::int8Ptr(module))
     });
+}
+
+Value* Instrumenter::getLocation(Module* module, Instruction* instruction)
+{
+    std::__cxx11::string location = DebugUtil::get().getInstructionLocation(instruction);
+    Type* locationSize = ArrayType::get(Types::int8(module), location.size() + 1); // +1 zero terminated
+    return new GlobalVariable(
+            *module, locationSize,
+            true, GlobalValue::PrivateLinkage,
+            ConstantDataArray::getString(module->getContext(), location, true));
 }
 
 void Instrumenter::instrumentBranch(Module* module, BranchInst* branch)
@@ -185,6 +198,7 @@ void Instrumenter::instrumentReturn(Module* module, ReturnInst* ret)
 void Instrumenter::instrumentCall(Module* module, CallInst* call)
 {
     if (this->functionBuilder.isInstrumentedFn(call->getCalledFunction())) return;
+    if (call->getCalledFunction()->isIntrinsic()) return;
 
     Instruction* insertionPoint = call->getNextNode();
     IRBuilder<> builder(insertionPoint);

@@ -9,7 +9,7 @@ ASSEMBLY_FILE=test.s
 EXE_FILE=test
 DYNAMIC_LIBRARY=llvmSEDyn
 REWINDER=rewinder
-FLAGS="-O0"
+FLAGS="-g -O0"
 
 pushd ${BUILD_DIR}
     make -j4 --silent || exit 1

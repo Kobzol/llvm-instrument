@@ -38,6 +38,8 @@ private:
     void instrumentGlobals(llvm::Module* module, llvm::CallInst* initCall);
     void checkGEP(llvm::Module* module, llvm::GetElementPtrInst* gep);
 
+    llvm::Value* getLocation(llvm::Module* module, llvm::Instruction* instruction);
+
     CallMap callMap;
     Functions functionBuilder;
 };

@@ -69,7 +69,7 @@ void SymManager::branch(ICmp* condition, bool concreteCondition, void* trueLabel
     this->pathCondition.addCondition(expr);
 }
 
-void SymManager::checkGEP(MemoryManager* heapManager, void* address, Constraint* indexer)
+void SymManager::checkGEP(MemoryManager* heapManager, void* address, Constraint* indexer, const char* location)
 {
     Logger::log("Checking GEP (buffer at %p)\n", address);
 
@@ -83,7 +83,7 @@ void SymManager::checkGEP(MemoryManager* heapManager, void* address, Constraint*
         Logger::log("%s\n", Logger::stringify(biggerIndex));
         if (this->pathCondition.isSatisfiable(biggerIndex))
         {
-            Logger::log("Access out of bounds possible\n");
+            Logger::log("Access out of bounds possible at: %s\n", location);
         }
     }
     else Logger::log("GEP block not found\n");
