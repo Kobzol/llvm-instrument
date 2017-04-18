@@ -184,8 +184,22 @@ void Instrumenter::instrumentReturn(Module* module, ReturnInst* ret)
 
 void Instrumenter::instrumentCall(Module* module, CallInst* call)
 {
+    if (this->functionBuilder.isInstrumentedFn(call->getCalledFunction())) return;
+
     Instruction* insertionPoint = call->getNextNode();
     IRBuilder<> builder(insertionPoint);
     Value* retValue = builder.CreateCall(this->functionBuilder.getReturnValue(module));
     this->callMap.storeReturn(call, retValue);
+
+    size_t argumentCount = call->getCalledFunction()->getArgumentList().size();
+    std::vector<Value*> arguments;
+    arguments.push_back(Values::int64(module, argumentCount));
+
+    for (auto& arg: call->arg_operands())
+    {
+        arguments.push_back(this->buildExpression(module, arg, call));
+    }
+
+    IRBuilder<> callBuilder(call);
+    callBuilder.CreateCall(this->functionBuilder.createFrame(module), arguments);
 }

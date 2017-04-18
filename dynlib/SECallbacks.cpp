@@ -2,6 +2,9 @@
 #include "symbolic/Constant.h"
 #include "../common/CmpType.h"
 
+#include <cstdarg>
+#include <vector>
+
 PUBLIC void CALLBACK(init)()
 {
     Logger::log("SE init\n");
@@ -109,9 +112,37 @@ PUBLIC void CALLBACK(setReturnValue)(void* returnValue)
         ((Constraint*)returnValue)->dump();
     }
     runtimeContext->getFrameManager()->setReturn(static_cast<Constraint*>(returnValue));
+    runtimeContext->getFrameManager()->pop();
 }
 PUBLIC void* CALLBACK(getReturnValue)()
 {
     IBlock block(runtimeContext);
     return runtimeContext->getFrameManager()->getReturnValue();
+}
+PUBLIC void CALLBACK(createFrame)(size_t argumentCount, ...)
+{
+    IBlock block(runtimeContext);
+
+    va_list ap;
+    va_start(ap, argumentCount);
+
+    Logger::log("Creating frame with %lu arguments\n", argumentCount);
+
+    std::vector<Constraint*> arguments(argumentCount);
+    for (int i = 0; i < argumentCount; i++)
+    {
+        Constraint* constraint = va_arg(ap, Constraint*);
+        constraint->dump(1);
+        arguments[i] = constraint;
+    }
+    va_end(ap);
+
+    runtimeContext->getFrameManager()->push(std::move(arguments));
+}
+PUBLIC void* CALLBACK(getParameter)(size_t index)
+{
+    Logger::log("getting %lu-th parameter\n", index);
+
+    IBlock block(runtimeContext);
+    return runtimeContext->getFrameManager()->getCurrentFrame().getParameter(index);
 }

@@ -31,6 +31,10 @@ public:
 
     llvm::Function* getReturnValue(llvm::Module* module);
     llvm::Function* setReturnValue(llvm::Module* module);
+    llvm::Function* createFrame(llvm::Module* module);
+    llvm::Function* getParameter(llvm::Module* module);
+
+    bool isInstrumentedFn(llvm::Function* function);
 
 private:
     std::string getName(std::string functionName);

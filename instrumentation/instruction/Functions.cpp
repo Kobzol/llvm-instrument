@@ -125,8 +125,29 @@ Function* Functions::setReturnValue(Module* module)
                                                       Types::voidPtr(module),
                                                       nullptr));
 }
+Function* Functions::createFrame(Module* module)
+{
+    return cast<Function>(module->getOrInsertFunction(this->getName("createFrame"),
+                                                      FunctionType::get(
+                                                              Types::voidType(module),
+                                                              { Types::int64(module) },
+                                                              true
+                                                      )));
+}
+Function* Functions::getParameter(Module* module)
+{
+    return cast<Function>(module->getOrInsertFunction(this->getName("getParameter"),
+                                                      Types::voidPtr(module),
+                                                      Types::int64(module),
+                                                      nullptr));
+}
 
 std::string Functions::getName(std::string functionName)
 {
     return prefix + functionName;
+}
+
+bool Functions::isInstrumentedFn(Function* function)
+{
+    return function->getName().startswith(prefix);
 }

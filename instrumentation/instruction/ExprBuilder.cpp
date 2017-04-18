@@ -152,5 +152,8 @@ Value* ExprBuilder::buildCast(Module* module, CastInst* cast)
 
 Value* ExprBuilder::buildArgument(Module* module, Argument* argument)
 {
-    return this->buildLoad(module, argument, argument->getType()->getPrimitiveSizeInBits());
+    IRBuilder<> builder(this->insertionPoint);
+    return builder.CreateCall(this->functionBuilder.getParameter(module), {
+            Values::int64(module, argument->getArgNo())
+    });
 }
