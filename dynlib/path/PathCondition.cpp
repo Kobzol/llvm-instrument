@@ -1,14 +1,12 @@
 #include "PathCondition.h"
 #include "../util/Logger.h"
 
-using namespace z3;
-
-PathCondition::PathCondition(context* ctx): ctx(ctx), condition(ctx->bool_val(true))
+PathCondition::PathCondition(z3::context* ctx): ctx(ctx), condition(ctx->bool_val(true))
 {
 
 }
 
-void PathCondition::addCondition(expr expr)
+void PathCondition::addCondition(z3::expr expr)
 {
     this->condition = this->condition && expr;
 }
@@ -18,10 +16,16 @@ void PathCondition::dump()
     Logger::log("PC: %s\n", Logger::stringify(this->condition));
 }
 
-bool PathCondition::isSatisfiable(const expr& expr)
+bool PathCondition::isSatisfiable(const z3::expr& expr, const z3::expr& indexer, z3::expr& model)
 {
-    solver solver(*this->ctx);
+    z3::solver solver(*this->ctx);
     solver.add(this->condition && expr);
 
-    return solver.check() == check_result::sat;
+    z3::check_result result = solver.check();
+    if (result == z3::check_result::sat)
+    {
+        model = solver.get_model().eval(indexer);
+        return true;
+    }
+    else return result != z3::check_result::unsat;
 }

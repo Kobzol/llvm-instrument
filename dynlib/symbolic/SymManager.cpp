@@ -4,7 +4,6 @@
 #include "Concrete.h"
 #include "Add.h"
 #include "SymbolicInt.h"
-#include "ICmp.h"
 
 SymManager::SymManager(): pathCondition(&this->ctx)
 {
@@ -81,9 +80,12 @@ void SymManager::checkGEP(MemoryManager* heapManager, void* address, Constraint*
         z3::expr indexerExpr = indexer->createExpr();
         z3::expr biggerIndex = indexerExpr >= this->ctx.int_val((unsigned long long) block->getSize());
         Logger::log("%s\n", Logger::stringify(biggerIndex));
-        if (this->pathCondition.isSatisfiable(biggerIndex))
+
+        z3::expr model(this->ctx);
+        if (this->pathCondition.isSatisfiable(biggerIndex, indexerExpr, model))
         {
             Logger::log("Access out of bounds possible at: %s\n", location);
+            Logger::log(1, "Array size: %lu, possible index: %s\n", block->getSize(), Logger::stringify(model));
         }
     }
     else Logger::log("GEP block not found\n");
