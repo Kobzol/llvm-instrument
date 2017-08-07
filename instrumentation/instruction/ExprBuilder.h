@@ -6,6 +6,7 @@
 class Instrumenter;
 
 namespace llvm {
+    class AllocaInst;
     class Argument;
     class BinaryOperator;
     class CallInst;
@@ -34,8 +35,9 @@ private:
     llvm::Value* buildCall(llvm::Module* module, llvm::CallInst* call);
     llvm::Value* buildCast(llvm::Module* module, llvm::CastInst* cast);
     llvm::Value* buildArgument(llvm::Module* module, llvm::Argument* argument);
+    llvm::Value* buildAlloca(llvm::Module* module, llvm::AllocaInst* alloca);
 
-    CallMap* callMap;
     llvm::Instruction* insertionPoint;
+    CallMap* callMap;
     Functions functionBuilder;
 };

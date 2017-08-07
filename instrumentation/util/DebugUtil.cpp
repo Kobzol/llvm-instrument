@@ -18,7 +18,11 @@ DebugInfo* DebugUtil::getDebugInfo(llvm::Value* inst)
 std::string DebugUtil::getInstructionLocation(llvm::Instruction* inst)
 {
     auto& debugLoc = inst->getDebugLoc();
-    return debugLoc.get()->getFilename().str() + ":" + std::to_string(debugLoc.getLine());
+    llvm::DILocation* loc = debugLoc.get();
+
+    if (loc == nullptr) return "";
+
+    return loc->getFilename().str() + ":" + std::to_string(debugLoc.getLine());
 }
 
 const llvm::MDNode* DebugUtil::findVarInFunction(const llvm::Function* function, const llvm::Value* value)

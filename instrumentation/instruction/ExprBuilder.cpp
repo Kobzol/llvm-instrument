@@ -66,6 +66,10 @@ Value* ExprBuilder::buildExpression(Module* module, Value* value)
     {
         return this->buildArgument(module, arg);
     }
+    else if (auto* alloca = dyn_cast<AllocaInst>(value))
+    {
+        return this->buildAlloca(module, alloca);
+    }
 
     std::cerr << "Unknown expression: " << std::endl;
     value->dump();
@@ -156,4 +160,10 @@ Value* ExprBuilder::buildArgument(Module* module, Argument* argument)
     return builder.CreateCall(this->functionBuilder.getParameter(module), {
             Values::int64(module, argument->getArgNo())
     });
+}
+
+Value* ExprBuilder::buildAlloca(Module* module, AllocaInst* alloca)
+{
+    Value* src = alloca;
+    return this->buildLoad(module, src, src->getType()->getPrimitiveSizeInBits());
 }

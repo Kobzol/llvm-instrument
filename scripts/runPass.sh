@@ -9,7 +9,7 @@ ASSEMBLY_FILE=test.s
 EXE_FILE=test
 DYNAMIC_LIBRARY=llvmSEDyn
 REWINDER=rewinder
-FLAGS="-g -O0"
+FLAGS="-O0"
 
 pushd ${BUILD_DIR}
     make -j4 --silent || exit 1
@@ -33,4 +33,4 @@ echo "Bitcode compiled"
 
 # launch program
 #./${BUILD_DIR}/${REWINDER} ./${BUILD_DIR}/${EXE_FILE} ./${BUILD_DIR}/lib${DYNAMIC_LIBRARY}.so ./${BUILD_DIR}/ || exit 1
-LD_LIBRARY_PATH=./${BUILD_DIR} LD_PRELOAD=lib${DYNAMIC_LIBRARY}.so ./${BUILD_DIR}/${EXE_FILE} || exit 1
+LD_BIND_NOW=1 LD_LIBRARY_PATH=./${BUILD_DIR} LD_PRELOAD=lib${DYNAMIC_LIBRARY}.so ./${BUILD_DIR}/${EXE_FILE} || exit 1

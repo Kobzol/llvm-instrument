@@ -9,7 +9,7 @@ cmake-build-release
 # test dir
 input
 
-useful_passes.txt
+useful_stuff.txt
 todo.txt
 find.sh
 .z3-trace

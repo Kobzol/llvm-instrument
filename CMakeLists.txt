@@ -182,7 +182,8 @@ add_library(instrumentation
         instrumentation/instruction/Functions.cpp
         instrumentation/instruction/Types.cpp
         instrumentation/instruction/Values.cpp
-        instrumentation/track/ValueRegistry.cpp instrumentation/track/CallMap.cpp instrumentation/track/CallMap.h)
+        instrumentation/track/ValueRegistry.cpp
+        instrumentation/track/CallMap.cpp)
 
 # LLVM pass
 add_library(llvmSE SHARED instrumentation/RegisterPass.cpp)
@@ -214,7 +215,8 @@ add_library(llvmSEDyn SHARED
         dynlib/symbolic/SymbolicInt.cpp
         dynlib/symbolic/ICmp.cpp
         dynlib/path/PathCondition.cpp
-        dynlib/util/Formatter.cpp dynlib/function/FrameManager.cpp dynlib/function/FrameManager.h dynlib/function/Frame.cpp dynlib/function/Frame.h)
+        dynlib/util/Formatter.cpp dynlib/function/FrameManager.cpp
+        dynlib/function/Frame.cpp)
 target_link_libraries(llvmSEDyn dl)
 target_link_libraries(llvmSEDyn ${Z3_LIB})
 
@@ -235,4 +237,4 @@ target_link_libraries(direct instrumentation)
 target_link_libraries(direct ${CLANG_LIB})
 
 # Emit bitcode for input
-add_custom_target(inputLlvm ${CMAKE_CXX_COMPILER} -g -O0 -c -emit-llvm -std=c++14 -o test.bc ${INPUT_FILE})
+add_custom_target(inputLlvm ${CMAKE_CXX_COMPILER} -O0 -c -emit-llvm -std=c++14 -o test.bc ${INPUT_FILE})
